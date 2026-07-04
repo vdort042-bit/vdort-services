@@ -218,7 +218,7 @@ function ApplyModal({ job, onClose, onSuccess }) {
                 )}
 
                 {/* Name + Email */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-navy-700 mb-1.5">Full Name *</label>
                     <input type="text" required value={form.name} onChange={set('name')} placeholder="Your full name" className={inputCls} />
@@ -230,7 +230,7 @@ function ApplyModal({ job, onClose, onSuccess }) {
                 </div>
 
                 {/* Phone + Experience */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-navy-700 mb-1.5">Phone</label>
                     <input type="tel" value={form.phone} onChange={set('phone')} placeholder="+91 9999999999" className={inputCls} />
@@ -567,3 +567,4 @@ export default function StudentJobs() {
     </div>
   );
 }
+

@@ -284,7 +284,7 @@ export default function ClientCandidates() {
                         href={app.resumeUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 text-sm text-brand-500 hover:text-brand-600 font-medium bg-brand-50 px-3 py-1.5 rounded-lg transition-colors"
+                        className="flex items-center gap-1.5 text-sm text-brand-500 hover:text-brand-600 font-medium bg-brand-50 px-3 py-2.5 rounded-lg transition-colors min-h-[44px]"
                       >
                         <FileText className="w-4 h-4" /> View Resume <Download className="w-3.5 h-3.5" />
                       </a>
@@ -294,7 +294,7 @@ export default function ClientCandidates() {
                       value={app.status}
                       disabled={updating === app.id}
                       onChange={(e) => updateStatus(app.id, e.target.value)}
-                      className="px-3 py-1.5 rounded-lg border border-surface-200 text-xs outline-none focus:border-brand-500 bg-white cursor-pointer"
+                      className="px-3 py-2.5 rounded-lg border border-surface-200 text-xs outline-none focus:border-brand-500 bg-white cursor-pointer min-h-[44px]"
                     >
                       {STATUSES.map((s) => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
                     </select>

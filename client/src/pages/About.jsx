@@ -26,7 +26,7 @@ export default function About() {
             About VDORT
           </motion.span>
           <motion.h1
-            className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-6"
+            className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -259,3 +259,4 @@ export default function About() {
     </>
   );
 }
+

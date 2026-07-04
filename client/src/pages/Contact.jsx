@@ -76,7 +76,7 @@ export default function Contact() {
         <div className="absolute inset-0 bg-gradient-to-b from-navy-950/40 via-transparent to-navy-950/80" />
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
           <motion.h1
-            className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-6"
+            className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -100,7 +100,7 @@ export default function Contact() {
           <div className="grid lg:grid-cols-5 gap-12">
             {/* Form */}
             <ScrollReveal direction="left" className="lg:col-span-3">
-              <div className="bg-white rounded-2xl shadow-elevated border border-surface-100 p-8 md:p-10">
+                <div className="bg-white rounded-2xl shadow-elevated border border-surface-100 p-5 sm:p-8 md:p-10">
                 <h2 className="font-heading font-bold text-2xl text-navy-900 mb-2">Send Us a Message</h2>
                 <p className="text-slate-500 mb-8">Fill out the form and our team will respond within 24 hours.</p>
 
@@ -233,7 +233,7 @@ export default function Contact() {
 
       {/* FAQ */}
       <section className="section-padding bg-surface-50">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-0">
           <SectionHeading
             overline="FAQ"
             title="Frequently Asked Questions"

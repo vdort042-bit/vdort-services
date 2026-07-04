@@ -29,7 +29,7 @@ export default function Services() {
         <div className="absolute inset-0 bg-gradient-to-b from-navy-950/40 via-transparent to-navy-950/80" />
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
           <motion.h1
-            className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-6"
+            className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -162,3 +162,4 @@ export default function Services() {
     </>
   );
 }
+

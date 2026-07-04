@@ -51,12 +51,12 @@ export default function AdminJobs() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="font-heading font-bold text-2xl text-navy-900">Job Management</h2>
           <p className="text-slate-500 text-sm">{jobs.length} total positions</p>
         </div>
-        <Button variant="primary" size="sm" icon={Plus} onClick={openCreate}>Add Job</Button>
+        <Button variant="primary" size="md" icon={Plus} onClick={openCreate} className="w-full sm:w-auto">Add Job</Button>
       </div>
 
       <div className="bg-white rounded-2xl border border-surface-200 shadow-card overflow-hidden">

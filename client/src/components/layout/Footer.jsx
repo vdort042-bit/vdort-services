@@ -89,18 +89,18 @@ export default function Footer() {
                 Get the latest insights on AI recruitment, industry trends, and career opportunities.
               </p>
             </div>
-            <form onSubmit={handleSubscribe} className="flex w-full md:w-auto">
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row w-full md:w-auto gap-0">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="flex-1 md:w-72 px-5 py-3 bg-white/5 border border-white/10 rounded-l-xl text-white placeholder:text-surface-300 focus:outline-none focus:border-brand-500 transition-colors text-sm"
+                className="flex-1 sm:w-72 px-5 py-3 bg-white/5 border border-white/10 rounded-t-xl sm:rounded-t-xl sm:rounded-tr-none sm:rounded-l-xl sm:rounded-bl-xl text-white placeholder:text-surface-300 focus:outline-none focus:border-brand-500 transition-colors text-sm min-h-[44px]"
                 required
               />
               <button
                 type="submit"
-                className="px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-500 text-white rounded-r-xl hover:from-brand-500 hover:to-brand-400 transition-all duration-300 flex items-center gap-2 font-medium text-sm cursor-pointer"
+                className="px-6 py-3 bg-gradient-to-r from-brand-600 to-brand-500 text-white rounded-b-xl sm:rounded-b-none sm:rounded-r-xl hover:from-brand-500 hover:to-brand-400 transition-all duration-300 flex items-center justify-center gap-2 font-medium text-sm cursor-pointer min-h-[44px]"
               >
                 {subscribed ? '✓ Subscribed' : <><Send className="w-4 h-4" /> Subscribe</>}
               </button>

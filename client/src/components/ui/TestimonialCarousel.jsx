@@ -37,8 +37,8 @@ export default function TestimonialCarousel({ testimonials = [] }) {
 
   return (
     <div className="relative max-w-4xl mx-auto">
-      <div className="relative overflow-hidden rounded-3xl bg-white shadow-elevated border border-surface-100 p-8 md:p-12 min-h-[320px] flex items-center">
-        <Quote className="absolute top-6 left-6 w-12 h-12 text-brand-100" />
+      <div className="relative overflow-hidden rounded-3xl bg-white shadow-elevated border border-surface-100 p-5 sm:p-8 md:p-12 min-h-[280px] sm:min-h-[320px] flex items-center">
+        <Quote className="absolute top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 sm:w-12 sm:h-12 text-brand-100" />
 
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
@@ -57,7 +57,7 @@ export default function TestimonialCarousel({ testimonials = [] }) {
               ))}
             </div>
 
-            <p className="text-lg md:text-xl text-slate-700 leading-relaxed mb-8 italic max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-slate-700 leading-relaxed mb-6 sm:mb-8 italic max-w-2xl mx-auto">
               "{t.text}"
             </p>
 
@@ -83,30 +83,32 @@ export default function TestimonialCarousel({ testimonials = [] }) {
       <div className="flex items-center justify-center gap-4 mt-8">
         <button
           onClick={prev}
-          className="p-3 rounded-full bg-white shadow-card border border-surface-200 hover:shadow-card-hover hover:border-brand-200 transition-all duration-300 cursor-pointer"
+          className="p-3 min-w-[44px] min-h-[44px] rounded-full bg-white shadow-card border border-surface-200 hover:shadow-card-hover hover:border-brand-200 transition-all duration-300 cursor-pointer flex items-center justify-center"
           aria-label="Previous testimonial"
         >
           <ChevronLeft className="w-5 h-5 text-navy-900" />
         </button>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           {testimonials.map((_, i) => (
             <button
               key={i}
               onClick={() => { setDirection(i > current ? 1 : -1); setCurrent(i); }}
-              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                i === current
-                  ? 'w-8 bg-gradient-to-r from-brand-500 to-accent-400'
-                  : 'w-2 bg-surface-300 hover:bg-brand-300'
-              }`}
+              className={`rounded-full transition-all duration-300 cursor-pointer min-w-[44px] min-h-[44px] flex items-center justify-center`}
               aria-label={`Go to testimonial ${i + 1}`}
-            />
+            >
+              <span className={`block rounded-full transition-all duration-300 ${
+                i === current
+                  ? 'w-8 h-2.5 bg-gradient-to-r from-brand-500 to-accent-400'
+                  : 'w-2.5 h-2.5 bg-surface-300 hover:bg-brand-300'
+              }`} />
+            </button>
           ))}
         </div>
 
         <button
           onClick={next}
-          className="p-3 rounded-full bg-white shadow-card border border-surface-200 hover:shadow-card-hover hover:border-brand-200 transition-all duration-300 cursor-pointer"
+          className="p-3 min-w-[44px] min-h-[44px] rounded-full bg-white shadow-card border border-surface-200 hover:shadow-card-hover hover:border-brand-200 transition-all duration-300 cursor-pointer flex items-center justify-center"
           aria-label="Next testimonial"
         >
           <ChevronRight className="w-5 h-5 text-navy-900" />

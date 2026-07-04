@@ -52,7 +52,7 @@ export default function AdminLayout() {
                 end={item.end}
                 onClick={() => setSidebarOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 min-h-[44px] ${
                     isActive
                       ? 'bg-brand-500/15 text-brand-400 border border-brand-500/20'
                       : 'text-surface-300 hover:text-white hover:bg-white/5'
@@ -103,7 +103,7 @@ export default function AdminLayout() {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-surface-200 px-4 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg hover:bg-surface-100 cursor-pointer">
+          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-3 min-w-[44px] min-h-[44px] rounded-xl hover:bg-surface-100 cursor-pointer flex items-center justify-center" aria-label="Open menu">
             <Menu className="w-5 h-5 text-navy-900" />
           </button>
           <div className="flex items-center gap-2 text-navy-900">

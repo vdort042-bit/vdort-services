@@ -118,7 +118,7 @@ export default function SuccessStories() {
 
                 <div className="p-6">
                   {/* Header */}
-                  <div className="flex items-start gap-4 mb-5">
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-5">
                     <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${story.color} flex items-center justify-center text-white font-bold text-lg shrink-0`}>
                       {story.avatar}
                     </div>
@@ -135,7 +135,7 @@ export default function SuccessStories() {
                       <span className="inline-block text-xs bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-full font-medium">
                         Placed ✓
                       </span>
-                      <p className="text-xs text-slate-500 mt-1 max-w-[120px] text-right leading-tight">{story.placedAt}</p>
+                      <p className="text-xs text-slate-500 mt-1 max-w-[140px] text-right leading-tight truncate">{story.placedAt}</p>
                     </div>
                   </div>
 
@@ -162,7 +162,7 @@ export default function SuccessStories() {
                   </blockquote>
 
                   {/* Footer — skills + time */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex gap-1.5 flex-wrap">
                       {story.skills.map((s) => (
                         <span key={s} className="text-xs bg-brand-50 text-brand-600 border border-brand-100 px-2 py-0.5 rounded-md font-medium">

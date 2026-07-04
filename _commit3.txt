@@ -1,0 +1,23 @@
+fix: comprehensive mobile responsiveness improvements
+
+Critical fixes:
+- Login.jsx: name fields grid-cols-3 → grid-cols-1 sm:grid-cols-3 (broken on mobile)
+- Careers.jsx: hero search bar stacks vertically on mobile (flex-col sm:flex-row)
+- StudentJobs.jsx: apply modal form fields grid-cols-2 → grid-cols-1 sm:grid-cols-2
+- Contact.jsx: FAQ section missing horizontal padding added (px-4 sm:px-6)
+- StudentLayout.jsx: rebuilt with persistent sidebar on lg+ (mirrors Admin/Client layout)
+
+Touch target fixes (all ≥44px):
+- Button.jsx: sm size py-2.5 + min-h-[44px], md/lg also normalized
+- AdminLayout.jsx: hamburger button min-w/h 44px, nav items min-h-[44px]
+- TestimonialCarousel.jsx: prev/next buttons min-44px, dot indicators wrapped in 44px hit area
+- ClientCandidates.jsx: resume link and status select min-h-[44px]
+
+Text size fixes:
+- About.jsx, Services.jsx, Careers.jsx, Contact.jsx: hero h1 text-3xl base (was text-4xl)
+
+Mobile layout fixes:
+- Footer.jsx: newsletter input+button stacks on mobile (flex-col sm:flex-row), proper border radius
+- SuccessStories.jsx: story header and footer row wrap on mobile
+- TestimonialCarousel.jsx: smaller padding/min-height on mobile, smaller Quote icon
+- AdminJobs.jsx: header row stacks on mobile, Add Job button full-width on small screens

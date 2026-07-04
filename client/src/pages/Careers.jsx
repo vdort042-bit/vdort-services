@@ -48,7 +48,7 @@ export default function Careers() {
         <div className="absolute inset-0 bg-gradient-to-b from-navy-950/40 via-transparent to-navy-950/80" />
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
           <motion.h1
-            className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-6"
+            className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -69,7 +69,7 @@ export default function Careers() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="flex bg-white rounded-2xl shadow-elevated overflow-hidden">
+            <div className="flex flex-col sm:flex-row bg-white rounded-2xl shadow-elevated overflow-hidden">
               <div className="flex-1 flex items-center gap-3 px-5">
                 <Search className="w-5 h-5 text-slate-400 shrink-0" />
                 <input
@@ -80,7 +80,7 @@ export default function Careers() {
                   className="w-full py-4 outline-none text-navy-900 placeholder:text-slate-400"
                 />
               </div>
-              <button className="px-8 bg-gradient-to-r from-brand-600 to-brand-500 text-white font-semibold hover:from-brand-500 hover:to-brand-400 transition-all cursor-pointer">
+              <button className="px-8 py-4 sm:py-0 bg-gradient-to-r from-brand-600 to-brand-500 text-white font-semibold hover:from-brand-500 hover:to-brand-400 transition-all cursor-pointer min-h-[52px]">
                 Search
               </button>
             </div>
@@ -91,7 +91,7 @@ export default function Careers() {
 
       {/* Candidate Registration & Resume Upload — unified hire section */}
       <section id="register" className="section-padding bg-white -mt-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-0">
           <ScrollReveal>
             <div className="bg-gradient-to-br from-navy-900 to-navy-800 rounded-3xl p-8 md:p-12 border border-navy-700 relative overflow-hidden shadow-elevated">
               <div className="absolute top-0 right-0 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl" />
