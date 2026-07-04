@@ -1,0 +1,8 @@
+feat: add missing trust elements per brand brief
+
+- Google Maps: updated to proper Bangalore Outer Ring Road embed URL
+- Footer: added Company Registration trust bar (CIN, GSTIN, incorporation details)
+- SuccessStories: rebuilt with rich candidate journey cards showing before/after role, salary jump %, placement time, skills, and quote
+- Added placement stats bar (avg 11 days, 68% salary increase, 98% satisfaction)
+- Added dark CTA section at bottom of success stories
+- constants.js: added cin, gstin, registeredAddress fields

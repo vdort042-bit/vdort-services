@@ -192,8 +192,30 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Company Registration Trust Bar */}
+        <div className="py-4 border-t border-white/10">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-center">
+            <span className="text-surface-300/50 text-xs flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-500/60 inline-block" />
+              Incorporated under Companies Act 2013
+            </span>
+            <span className="text-surface-300/50 text-xs flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-500/60 inline-block" />
+              CIN: {COMPANY.cin}
+            </span>
+            <span className="text-surface-300/50 text-xs flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-500/60 inline-block" />
+              GSTIN: {COMPANY.gstin}
+            </span>
+            <span className="text-surface-300/50 text-xs flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-500/60 inline-block" />
+              Registered in {COMPANY.registeredAddress}
+            </span>
+          </div>
+        </div>
+
         {/* Bottom bar */}
-        <div className="py-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="py-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-surface-300/60 text-xs">
             © {new Date().getFullYear()} {COMPANY.fullName} All rights reserved.
           </p>
