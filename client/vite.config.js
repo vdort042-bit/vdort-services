@@ -1,0 +1,34 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+  server: {
+    port: 5173,
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    // Split large vendor chunks for better caching
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/framer-motion')) return 'motion';
+          if (id.includes('node_modules/firebase')) return 'firebase';
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router')) return 'vendor';
+        },
+      },
+    },
+  },
+});
