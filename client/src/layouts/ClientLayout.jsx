@@ -19,7 +19,7 @@ export default function ClientLayout() {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/client/login');
+    navigate('/', { replace: true });
   };
 
   return (

@@ -81,13 +81,17 @@ export function AuthProvider({ children }) {
 
   // JWT login (for admin/client portals via /admin/login, /client/login)
   const login = useCallback(async (email, password) => {
-    const res = await api.auth.login(email, password);
-    localStorage.setItem('vdort_token', res.data.token);
-    // Normalize: always expose both `id` and `uid` so client pages work regardless
-    const rawUser = res.data.user;
-    const u = { ...rawUser, uid: rawUser.uid || rawUser.id, id: rawUser.id || rawUser.uid, authType: 'jwt' };
-    setUser(u);
-    return u;
+    setLoading(true);
+    try {
+      const res = await api.auth.login(email, password);
+      localStorage.setItem('vdort_token', res.data.token);
+      const rawUser = res.data.user;
+      const u = { ...rawUser, uid: rawUser.uid || rawUser.id, id: rawUser.id || rawUser.uid, authType: 'jwt' };
+      setUser(u);
+      return u;
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // Universal logout

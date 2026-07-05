@@ -1,12 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { auth } from '../../firebase/firebase';
 import Loader from '../ui/Loader';
-
-const loginRoutes = {
-  admin: '/admin/login',
-  client: '/client/login',
-  student: '/login',
-};
 
 export default function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth();
@@ -14,9 +9,17 @@ export default function ProtectedRoute({ children, role }) {
   if (loading) return <Loader fullScreen />;
 
   if (!user) {
-    return <Navigate to={loginRoutes[role] || '/login'} replace />;
+    // Brief window right after login: token or Firebase session exists
+    // but AuthContext hasn't finished setting user state yet — show loader
+    const hasJwtToken = !!localStorage.getItem('vdort_token');
+    const hasFirebaseSession = !!auth.currentUser;
+    if (hasJwtToken || hasFirebaseSession) return <Loader fullScreen />;
+
+    // Truly not logged in → homepage
+    return <Navigate to="/" replace />;
   }
 
+  // Logged in but wrong role → redirect to correct portal
   if (role && user.role !== role) {
     if (user.role === 'admin') return <Navigate to="/admin" replace />;
     if (user.role === 'client') return <Navigate to="/client" replace />;
