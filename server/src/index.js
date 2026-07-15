@@ -15,7 +15,10 @@ import subscriberRoutes from './routes/subscribers.js';
 import testimonialRoutes from './routes/testimonials.js';
 import analyticsRoutes from './routes/analytics.js';
 import userRoutes from './routes/users.js';
+import notificationRoutes from './routes/notifications.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
+import { startCleanupScheduler } from './utils/cleanupExpiredResumes.js';
+import { verifyEmailConnection } from './utils/emailService.js';
 
 dotenv.config();
 
@@ -40,6 +43,7 @@ app.use('/api/subscribers',  subscriberRoutes);
 app.use('/api/testimonials', testimonialRoutes);
 app.use('/api/analytics',    analyticsRoutes);
 app.use('/api/users',        userRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
@@ -53,6 +57,18 @@ async function start() {
     console.log('📦 Checking seed data...');
     await seedIfEmpty();
     console.log('✅ Seed data ready!');
+
+    startCleanupScheduler();
+    console.log('⏰ Resume cleanup scheduler started (48h auto-delete)');
+
+    const emailStatus = await verifyEmailConnection();
+    if (emailStatus.ok) {
+      console.log(`📧 Email: ${emailStatus.message}`);
+    } else {
+      console.warn(`📧 Email NOT ready: ${emailStatus.message}`);
+      console.warn('   → Add Gmail App Password to SMTP_PASS in server/.env');
+      console.warn('   → Generate at: https://myaccount.google.com/apppasswords');
+    }
 
     app.listen(PORT, () => {
       console.log(`\n🚀 VDORT API Server running on http://localhost:${PORT}`);

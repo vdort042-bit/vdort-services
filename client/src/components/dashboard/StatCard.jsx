@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-export default function StatCard({ icon: Icon, label, value, change, color = 'brand' }) {
+export default function StatCard({ icon: Icon, label, value, change, color = 'brand', onClick }) {
   const colors = {
     brand: 'from-brand-500 to-brand-600',
     accent: 'from-accent-500 to-cyan-500',
@@ -9,11 +9,10 @@ export default function StatCard({ icon: Icon, label, value, change, color = 'br
     orange: 'from-orange-500 to-amber-500',
   };
 
-  return (
-    <motion.div
-      className="bg-white rounded-2xl border border-surface-200 p-6 shadow-card hover:shadow-card-hover transition-all duration-300"
-      whileHover={{ y: -2 }}
-    >
+  const className = `bg-white rounded-2xl border border-surface-200 p-6 shadow-card hover:shadow-card-hover transition-all duration-300${onClick ? ' w-full text-left cursor-pointer' : ''}`;
+
+  const content = (
+    <>
       <div className="flex items-start justify-between mb-4">
         <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors[color]} flex items-center justify-center shadow-lg`}>
           <Icon className="w-6 h-6 text-white" />
@@ -24,8 +23,22 @@ export default function StatCard({ icon: Icon, label, value, change, color = 'br
           </span>
         )}
       </div>
-      <p className="text-3xl font-heading font-bold text-navy-900 mb-1">{value}</p>
+      <p className="text-3xl font-heading font-bold text-navy-900 mb-1">{value ?? '—'}</p>
       <p className="text-sm text-slate-500">{label}</p>
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={className}>
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <motion.div className={className} whileHover={{ y: -2 }}>
+      {content}
     </motion.div>
   );
 }

@@ -24,27 +24,31 @@ export default function Services() {
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[55vh] flex items-center gradient-hero overflow-hidden">
-        <ParticleBackground />
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-950/40 via-transparent to-navy-950/80" />
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
+      <section className="pt-16 bg-gradient-to-br from-brand-600 via-brand-500 to-violet-600">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center">
+          <motion.span
+            className="inline-block text-xs font-bold uppercase tracking-widest text-white/80 mb-4"
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          >
+            Our Services
+          </motion.span>
           <motion.h1
-            className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-6"
+            className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl text-white mb-5 leading-tight"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            Enterprise Staffing <span className="gradient-text">Solutions</span>
+            Career Services <span className="text-yellow-300">For You</span>
           </motion.h1>
           <motion.p
-            className="text-lg text-surface-300 max-w-2xl mx-auto"
+            className="text-brand-100 max-w-2xl mx-auto text-base sm:text-lg"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            Comprehensive recruitment services tailored for modern enterprises. From IT staffing to RPO, we deliver results.
+            From resume building to job placement — everything you need to land your dream IT job.
           </motion.p>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
+        <div className="h-10 bg-gradient-to-b from-transparent to-white" />
       </section>
 
       {/* Services Detail */}
@@ -65,7 +69,7 @@ export default function Services() {
                   <p className="text-slate-600 text-lg leading-relaxed mb-6">{service.description}</p>
 
                   <h4 className="font-heading font-semibold text-navy-900 mb-3">Key Benefits</h4>
-                  <ul className="space-y-3 mb-8">
+                  <ul className="space-y-3">
                     {service.benefits.map((benefit) => (
                       <li key={benefit} className="flex gap-3 items-start">
                         <CheckCircle className="w-5 h-5 text-brand-500 mt-0.5 shrink-0" />
@@ -73,12 +77,6 @@ export default function Services() {
                       </li>
                     ))}
                   </ul>
-
-                  <Link to="/contact">
-                    <Button variant="primary" iconRight={ArrowRight}>
-                      Get Started
-                    </Button>
-                  </Link>
                 </div>
 
                 {/* Process Steps */}

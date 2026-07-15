@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { jobs, applications, contacts, subscribers, testimonials, users } from '../store/firestoreStore.js';
 import { authenticate, authorize } from '../middleware/auth.js';
+import { getYearMonth } from '../utils/dateHelper.js';
 
 const router = Router();
 
@@ -8,6 +9,7 @@ router.get('/overview', authenticate, authorize('admin'), async (req, res) => {
   const [
     totalJobs, activeJobs, totalApplications, newApplications,
     totalContacts, newContacts, totalSubscribers, totalClients, totalTestimonials,
+    totalStudents,
   ] = await Promise.all([
     jobs.count(),
     jobs.countActive(),
@@ -18,6 +20,7 @@ router.get('/overview', authenticate, authorize('admin'), async (req, res) => {
     subscribers.count(),
     users.countByRole('client'),
     testimonials.count(),
+    users.countByRole('student'),
   ]);
 
   res.json({
@@ -27,6 +30,7 @@ router.get('/overview', authenticate, authorize('admin'), async (req, res) => {
       totalApplications, newApplications,
       totalContacts, newContacts,
       totalSubscribers, totalClients, totalTestimonials,
+      totalStudents,
       placements: 5247,
       countries: 25,
       recruiters: 200,
@@ -73,6 +77,46 @@ router.get('/chart', authenticate, authorize('admin'), (_req, res) => {
       applications: months.map((m, i) => ({ month: m, value: 80  + i * 25 + Math.floor(Math.random() * 15) })),
     },
   });
+});
+
+const STATUS_LIST = ['new', 'reviewing', 'shortlisted', 'interviewed', 'hired', 'rejected'];
+
+router.get('/monthly', authenticate, authorize('admin'), async (req, res) => {
+  try {
+    const year = parseInt(req.query.year, 10) || new Date().getFullYear();
+    const month = parseInt(req.query.month, 10) || new Date().getMonth() + 1;
+
+    const allApps = await applications.list({});
+    const filtered = allApps.filter((app) => {
+      const ym = getYearMonth(app.createdAt);
+      return ym && ym.year === year && ym.month === month;
+    });
+
+    const byStatus = Object.fromEntries(STATUS_LIST.map((s) => [s, 0]));
+    filtered.forEach((app) => {
+      const s = app.status || 'new';
+      if (byStatus[s] !== undefined) byStatus[s]++;
+      else byStatus.new++;
+    });
+
+    res.json({
+      success: true,
+      data: {
+        year,
+        month,
+        total: filtered.length,
+        byStatus,
+        availableMonths: [...new Set(
+          allApps
+            .map((a) => getYearMonth(a.createdAt))
+            .filter(Boolean)
+            .map((ym) => `${ym.year}-${ym.month}`)
+        )].sort().reverse(),
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 export default router;

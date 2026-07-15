@@ -40,9 +40,6 @@ const ClientCandidates = lazy(() => import('./pages/client/ClientCandidates'));
 
 // Student pages
 const StudentDashboard = lazy(() => import('./pages/student/StudentDashboard'));
-const StudentJobs = lazy(() => import('./pages/student/StudentJobs'));
-const StudentApplications = lazy(() => import('./pages/student/StudentApplications'));
-const StudentProfile = lazy(() => import('./pages/student/StudentProfile'));
 
 export default function App() {
   return (
@@ -110,9 +107,6 @@ export default function App() {
               }
             >
               <Route index element={<StudentDashboard />} />
-              <Route path="jobs" element={<StudentJobs />} />
-              <Route path="applications" element={<StudentApplications />} />
-              <Route path="profile" element={<StudentProfile />} />
             </Route>
 
             {/* ── Fallback ── */}
@@ -122,4 +116,4 @@ export default function App() {
       </BrowserRouter>
     </AuthProvider>
   );
-}
+}  

@@ -22,16 +22,13 @@ export const COMPANY = {
 
 export const NAV_LINKS = [
   { label: 'Home', path: '/' },
-  { label: 'About', path: '/about' },
+  { label: 'About Us', path: '/about' },
   { label: 'Services', path: '/services' },
-  { label: 'Industries', path: '/industries' },
-  { label: 'AI Recruitment', path: '/ai-recruitment' },
   { label: 'Careers', path: '/careers' },
   { label: 'Contact', path: '/contact' },
 ];
 
 export const PORTAL_LINKS = [
   { label: 'Admin Portal', path: '/admin/login', color: 'text-brand-500' },
-  { label: 'Client Portal', path: '/client/login', color: 'text-accent-400' },
   { label: 'Candidate Login', path: '/login', color: 'text-green-500' },
 ];

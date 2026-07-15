@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, FileText, X, ArrowRight, CheckCircle } from 'lucide-react';
 import api from '../../services/api';
@@ -7,14 +7,38 @@ import Button from '../ui/Button';
 const ACCEPTED = '.pdf,.doc,.docx';
 const MAX_SIZE_MB = 5;
 
-export default function ResumeUploadForm({ job = null, onSuccess, compact = false }) {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', experience: '', skills: '', message: '' });
+export default function ResumeUploadForm({
+  job = null,
+  onSuccess,
+  compact = false,
+  initialData = null,
+  userId = null,
+}) {
+  const [form, setForm] = useState({
+    name: initialData?.name || '',
+    email: initialData?.email || '',
+    phone: initialData?.phone || '',
+    experience: '',
+    skills: '',
+    message: '',
+  });
   const [resumeFile, setResumeFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const fileRef = useRef(null);
+
+  useEffect(() => {
+    if (initialData) {
+      setForm((f) => ({
+        ...f,
+        name: initialData.name || f.name,
+        email: initialData.email || f.email,
+        phone: initialData.phone || f.phone,
+      }));
+    }
+  }, [initialData]);
 
   const handleFile = (file) => {
     if (!file) return;
@@ -43,26 +67,27 @@ export default function ResumeUploadForm({ job = null, onSuccess, compact = fals
       setError('Please upload your resume');
       return;
     }
+    if (form.phone && form.phone.length !== 10) {
+      setError('Phone number must be exactly 10 digits');
+      return;
+    }
     setSubmitting(true);
     setError('');
     try {
       const formData = new FormData();
       if (job?.id) formData.append('jobId', job.id);
+      if (userId) formData.append('userId', userId);
       formData.append('name', form.name);
       formData.append('email', form.email);
       formData.append('phone', form.phone);
       formData.append('experience', form.experience);
-      formData.append('message', [form.skills && `Skills: ${form.skills}`, form.message].filter(Boolean).join('\n'));
+      formData.append('skills', form.skills);
+      formData.append('message', form.message);
       formData.append('resume', resumeFile);
 
       await api.applications.submit(formData);
       setSubmitted(true);
       onSuccess?.();
-      setTimeout(() => {
-        setSubmitted(false);
-        setForm({ name: '', email: '', phone: '', experience: '', skills: '', message: '' });
-        setResumeFile(null);
-      }, 4000);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -77,13 +102,13 @@ export default function ResumeUploadForm({ job = null, onSuccess, compact = fals
           <CheckCircle className="w-8 h-8 text-green-500" />
         </div>
         <h3 className="font-heading font-bold text-lg text-navy-900 mb-2">Resume Submitted Successfully!</h3>
-        <p className="text-slate-500 text-sm">Our team will review your profile and match you with the best opportunities.</p>
+        <p className="text-slate-500 text-sm">Our team has received your resume. We will contact you within 24 hours.</p>
       </motion.div>
     );
   }
 
   const inputClass = compact
-    ? 'w-full px-4 py-2.5 rounded-xl border border-surface-200 bg-surface-50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none text-sm'
+    ? 'w-full px-4 py-2.5 rounded-xl border border-surface-200 bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none text-sm text-navy-900'
     : 'w-full px-4 py-3 rounded-xl border border-white/10 bg-white/5 text-white placeholder:text-surface-300/50 focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 outline-none text-sm';
 
   return (
@@ -103,8 +128,9 @@ export default function ResumeUploadForm({ job = null, onSuccess, compact = fals
           onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
           className={inputClass}
         />
-        <input type="tel" placeholder="Phone Number" value={form.phone}
-          onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+        <input type="tel" placeholder="Phone Number (10 digits)" value={form.phone}
+          onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value.replace(/\D/g, '').slice(0, 10) }))}
+          maxLength={10}
           className={inputClass}
         />
         <input type="text" placeholder="Years of Experience *" required value={form.experience}
@@ -123,7 +149,6 @@ export default function ResumeUploadForm({ job = null, onSuccess, compact = fals
         className={`${inputClass} resize-none`}
       />
 
-      {/* Resume Upload */}
       <div
         className={`relative border-2 border-dashed rounded-2xl p-6 text-center transition-all cursor-pointer ${
           dragOver
@@ -167,10 +192,10 @@ export default function ResumeUploadForm({ job = null, onSuccess, compact = fals
         )}
       </div>
 
-      {error && <p className="text-red-400 text-sm">{error}</p>}
+      {error && <p className="text-red-500 text-sm">{error}</p>}
 
       <Button type="submit" variant="primary" size="lg" className="w-full" iconRight={ArrowRight} disabled={submitting}>
-        {submitting ? 'Uploading...' : job ? 'Submit Application' : 'Upload Resume & Register'}
+        {submitting ? 'Submitting...' : 'Submit Resume'}
       </Button>
     </form>
   );

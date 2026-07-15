@@ -1,277 +1,249 @@
-import { useState, useMemo, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, MapPin, Briefcase, Clock, DollarSign, Upload, ArrowRight, X, ChevronDown, UserPlus } from 'lucide-react';
-import api from '../services/api';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Users, Briefcase, Star, BookOpen, FileText, Megaphone, MessageSquare, Rocket, BadgeCheck, ArrowRight } from 'lucide-react';
 import ScrollReveal from '../components/ui/ScrollReveal';
-import Button from '../components/ui/Button';
-import ParticleBackground from '../components/ui/ParticleBackground';
-import Loader from '../components/ui/Loader';
-import ResumeUploadForm from '../components/careers/ResumeUploadForm';
+import SectionHeading from '../components/ui/SectionHeading';
+
+const services = [
+  {
+    icon: FileText,
+    title: 'Resume Optimization',
+    desc: 'Our experts craft ATS-friendly resumes that get noticed by top recruiters at Fortune 500 companies.',
+    color: 'from-blue-500 to-cyan-500',
+  },
+  {
+    icon: Star,
+    title: 'LinkedIn Branding',
+    desc: 'We build a powerful LinkedIn profile that attracts recruiters and showcases your true potential.',
+    color: 'from-violet-500 to-purple-500',
+  },
+  {
+    icon: MessageSquare,
+    title: 'Interview Coaching',
+    desc: 'Mock interviews, behavioral prep, and technical coaching to make you walk in with full confidence.',
+    color: 'from-emerald-500 to-teal-500',
+  },
+  {
+    icon: Megaphone,
+    title: 'Career Marketing',
+    desc: 'We market your profile across 12+ job portals including LinkedIn, Dice, Monster, and Indeed.',
+    color: 'from-orange-500 to-red-500',
+  },
+  {
+    icon: BookOpen,
+    title: 'Technical Training',
+    desc: 'Domain-specific training programs to sharpen your skills and close knowledge gaps before interviews.',
+    color: 'from-pink-500 to-rose-500',
+  },
+  {
+    icon: Rocket,
+    title: 'Job Placement',
+    desc: 'We connect you directly with hiring managers at leading IT companies across the US and India.',
+    color: 'from-amber-500 to-yellow-500',
+  },
+];
+
+const steps = [
+  { num: '01', title: 'Submit Your Resume', desc: 'Upload your resume and fill in your profile details. Takes less than 2 minutes.' },
+  { num: '02', title: 'Screening & Counselling', desc: 'Our team reviews your profile and schedules a consultation to understand your goals.' },
+  { num: '03', title: 'Resume Building', desc: 'We optimize your resume to be ATS-ready and tailored for your target roles.' },
+  { num: '04', title: 'Technical Training', desc: 'Domain-specific preparation sessions to ensure you\'re interview-ready.' },
+  { num: '05', title: 'Profile Marketing', desc: 'We actively market your profile to relevant recruiters and hiring managers.' },
+  { num: '06', title: 'Interview Preparation', desc: 'Mock interviews, Q&A prep, and company-specific coaching before every round.' },
+  { num: '07', title: 'Offer & Onboarding', desc: 'We guide you through offer negotiation, documentation, and smooth onboarding.' },
+  { num: '08', title: 'Post-Placement Support', desc: 'We stay with you even after joining — verification, guidance, and career advice.' },
+];
+
+const candidates = [
+  { icon: '🎓', title: 'Recent Graduates', desc: 'Freshers looking to break into IT with their first US/India job.' },
+  { icon: '🚀', title: 'Better Opportunity Seekers', desc: 'Professionals looking to upgrade to better roles and higher pay.' },
+  { icon: '🔄', title: 'Career Changers', desc: 'Transitioning from one domain to another with our bridge programs.' },
+];
+
+const stats = [
+  { value: '2,400+', label: 'Placements Done' },
+  { value: '98%', label: 'Candidate Satisfaction' },
+  { value: '11 Days', label: 'Avg. Time-to-Place' },
+  { value: '25+', label: 'Countries Served' },
+];
 
 export default function Careers() {
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
-  const [industryFilter, setIndustryFilter] = useState('');
-  const [showApplication, setShowApplication] = useState(null);
-
-  useEffect(() => {
-    api.jobs.list()
-      .then((res) => setJobs(res.data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
-  const filteredJobs = useMemo(() => {
-    return jobs.filter((job) => {
-      const matchesSearch = !search ||
-        job.title?.toLowerCase().includes(search.toLowerCase()) ||
-        job.skills?.some(s => s.toLowerCase().includes(search.toLowerCase())) ||
-        job.location?.toLowerCase().includes(search.toLowerCase());
-      const matchesType = !typeFilter || job.type === typeFilter;
-      const matchesIndustry = !industryFilter || job.industry === industryFilter;
-      return matchesSearch && matchesType && matchesIndustry;
-    });
-  }, [jobs, search, typeFilter, industryFilter]);
-
-  const uniqueTypes = [...new Set(jobs.map(j => j.type))];
-  const uniqueIndustries = [...new Set(jobs.map(j => j.industry))];
-
-  if (loading) return <Loader fullScreen />;
-
   return (
     <>
-      {/* Hero */}
-      <section className="relative min-h-[55vh] flex items-center gradient-hero overflow-hidden">
-        <ParticleBackground />
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-950/40 via-transparent to-navy-950/80" />
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
+      {/* ── Hero ── */}
+      <section className="relative pt-16 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-600 via-brand-500 to-violet-600" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+        <div className="absolute inset-0 opacity-10"
+          style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
+          <motion.div
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full border border-white/30 mb-6"
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          >
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-white text-xs sm:text-sm font-semibold">#1 IT Staffing Partner — India &amp; US</span>
+          </motion.div>
+
           <motion.h1
-            className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-6"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-5 leading-tight"
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           >
-            Shape Your <span className="gradient-text">Future</span>
+            Your Dream IT Job<br />
+            <span className="text-yellow-300 drop-shadow-lg">Is Waiting For You ✨</span>
           </motion.h1>
+
           <motion.p
-            className="text-lg text-surface-300 max-w-2xl mx-auto mb-10"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
+            className="text-base sm:text-lg text-indigo-100 max-w-2xl mx-auto"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
           >
-            Discover exceptional career opportunities at leading companies worldwide. Your dream role is just a click away.
+            Login and submit your resume — our team will match you with the best IT opportunities across the US and India.
           </motion.p>
-
-          <motion.div
-            className="max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <div className="flex flex-col sm:flex-row bg-white rounded-2xl shadow-elevated overflow-hidden">
-              <div className="flex-1 flex items-center gap-3 px-5">
-                <Search className="w-5 h-5 text-slate-400 shrink-0" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search by role, skill, or location..."
-                  className="w-full py-4 outline-none text-navy-900 placeholder:text-slate-400"
-                />
-              </div>
-              <button className="px-8 py-4 sm:py-0 bg-gradient-to-r from-brand-600 to-brand-500 text-white font-semibold hover:from-brand-500 hover:to-brand-400 transition-all cursor-pointer min-h-[52px]">
-                Search
-              </button>
-            </div>
-          </motion.div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-surface-50 to-transparent" />
+
+        <div className="h-14 bg-gradient-to-b from-transparent to-gray-50" />
       </section>
 
-      {/* Candidate Registration & Resume Upload — unified hire section */}
-      <section id="register" className="section-padding bg-white -mt-8">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-0">
-          <ScrollReveal>
-            <div className="bg-gradient-to-br from-navy-900 to-navy-800 rounded-3xl p-8 md:p-12 border border-navy-700 relative overflow-hidden shadow-elevated">
-              <div className="absolute top-0 right-0 w-72 h-72 bg-brand-500/10 rounded-full blur-3xl" />
-              <div className="absolute bottom-0 left-0 w-48 h-48 bg-accent-400/10 rounded-full blur-3xl" />
-
-              <div className="relative">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-12 h-12 rounded-xl bg-brand-500/20 flex items-center justify-center">
-                    <UserPlus className="w-6 h-6 text-brand-400" />
-                  </div>
-                  <span className="text-brand-400 text-sm font-semibold uppercase tracking-widest">Join VDORT Talent Network</span>
+      {/* ── Stats ── */}
+      <section className="bg-white py-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {stats.map((s, i) => (
+              <ScrollReveal key={s.label} delay={i * 0.08}>
+                <div className="text-center p-5 rounded-2xl bg-surface-50 border border-surface-200">
+                  <p className="text-2xl sm:text-3xl font-heading font-bold text-navy-900">{s.value}</p>
+                  <p className="text-xs sm:text-sm text-slate-500 mt-1">{s.label}</p>
                 </div>
-                <h2 className="font-heading font-bold text-2xl md:text-3xl text-white mb-3">
-                  Upload Your Resume & Get Hired
-                </h2>
-                <p className="text-surface-300 mb-8 max-w-xl">
-                  Register as a candidate in one step. Upload your resume and our AI will match you with top companies worldwide — even if you don't see your dream role listed below.
-                </p>
-
-                <ResumeUploadForm />
-              </div>
-            </div>
-          </ScrollReveal>
+              </ScrollReveal>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Jobs Section */}
+      {/* ── Who Can Apply ── */}
       <section className="section-padding bg-surface-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="font-heading font-bold text-3xl text-navy-900 mb-3">Current Openings</h2>
-            <p className="text-slate-500">Browse open positions and apply directly with your resume</p>
-          </div>
-
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3 mb-8">
-            <div className="relative">
-              <select
-                value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
-                className="appearance-none pl-4 pr-10 py-2.5 rounded-xl border border-surface-200 bg-white text-sm font-medium text-navy-900 cursor-pointer focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none"
-              >
-                <option value="">All Types</option>
-                {uniqueTypes.map(t => <option key={t} value={t}>{t}</option>)}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-            </div>
-
-            <div className="relative">
-              <select
-                value={industryFilter}
-                onChange={(e) => setIndustryFilter(e.target.value)}
-                className="appearance-none pl-4 pr-10 py-2.5 rounded-xl border border-surface-200 bg-white text-sm font-medium text-navy-900 cursor-pointer focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none"
-              >
-                <option value="">All Industries</option>
-                {uniqueIndustries.map(ind => <option key={ind} value={ind}>{ind}</option>)}
-              </select>
-              <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-            </div>
-
-            {(typeFilter || industryFilter || search) && (
-              <button
-                onClick={() => { setTypeFilter(''); setIndustryFilter(''); setSearch(''); }}
-                className="px-4 py-2.5 rounded-xl text-sm font-medium text-brand-500 hover:bg-brand-50 transition-colors cursor-pointer flex items-center gap-1"
-              >
-                <X className="w-3.5 h-3.5" /> Clear Filters
-              </button>
-            )}
-
-            <span className="ml-auto text-sm text-slate-500 self-center">
-              {filteredJobs.length} position{filteredJobs.length !== 1 && 's'} found
-            </span>
-          </div>
-
-          {/* Job Cards */}
-          <div className="space-y-4">
-            <AnimatePresence mode="popLayout">
-              {filteredJobs.map((job, i) => (
-                <motion.div
-                  key={job.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: i * 0.03 }}
-                  className="bg-white rounded-2xl border border-surface-200 p-6 md:p-8 shadow-card hover:shadow-card-hover hover:border-brand-200 transition-all duration-300 group"
-                >
-                  <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                    <div className="flex-1">
-                      <div className="flex items-start gap-4 mb-3">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-heading font-bold shrink-0">
-                          {job.title[0]}
-                        </div>
-                        <div>
-                          <h3 className="font-heading font-bold text-lg text-navy-900 group-hover:text-brand-600 transition-colors">
-                            {job.title}
-                          </h3>
-                          <p className="text-slate-500 text-sm">{job.company}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-3 mb-4 text-sm text-slate-500">
-                        <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{job.location}</span>
-                        <span className="flex items-center gap-1"><Briefcase className="w-3.5 h-3.5" />{job.type}</span>
-                        <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{job.experience}</span>
-                        <span className="flex items-center gap-1"><DollarSign className="w-3.5 h-3.5" />{job.salary}</span>
-                      </div>
-
-                      <p className="text-slate-600 text-sm mb-4 line-clamp-2">{job.description}</p>
-
-                      <div className="flex flex-wrap gap-1.5">
-                        {(job.skills || []).map(skill => (
-                          <span key={skill} className="px-2.5 py-1 rounded-lg bg-brand-50 text-brand-600 text-xs font-medium border border-brand-100">
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex lg:flex-col gap-3 shrink-0">
-                      <Button variant="primary" size="sm" iconRight={ArrowRight} onClick={() => setShowApplication(job)}>
-                        Apply with Resume
-                      </Button>
-                      <span className="text-xs text-slate-400 text-center">{job.posted}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-
-            {filteredJobs.length === 0 && (
-              <div className="text-center py-16">
-                <Search className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                <h3 className="font-heading font-bold text-xl text-navy-900 mb-2">No positions found</h3>
-                <p className="text-slate-500 mb-6">Try adjusting your search or upload your resume above.</p>
-                <a href="#register">
-                  <Button variant="primary" icon={Upload}>Upload Resume</Button>
-                </a>
-              </div>
-            )}
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            overline="Who Can Apply"
+            title="VDORT is For You If..."
+            subtitle="We work with candidates at all stages of their IT career journey."
+          />
+          <div className="mt-12 grid sm:grid-cols-3 gap-6">
+            {candidates.map((c, i) => (
+              <ScrollReveal key={c.title} delay={i * 0.1}>
+                <div className="bg-white rounded-2xl border border-surface-200 shadow-card p-6 text-center hover:shadow-card-hover transition-all">
+                  <div className="text-4xl mb-4">{c.icon}</div>
+                  <h3 className="font-heading font-bold text-navy-900 mb-2">{c.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{c.desc}</p>
+                </div>
+              </ScrollReveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Application Modal */}
-      <AnimatePresence>
-        {showApplication && (
-          <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowApplication(null)}
-          >
-            <motion.div
-              className="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-elevated p-8"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="font-heading font-bold text-xl text-navy-900">Apply for Position</h2>
-                  <p className="text-brand-500 font-medium text-sm">{showApplication.title}</p>
-                </div>
-                <button onClick={() => setShowApplication(null)} className="p-2 hover:bg-surface-100 rounded-lg transition-colors cursor-pointer">
-                  <X className="w-5 h-5 text-slate-500" />
-                </button>
-              </div>
+      {/* ── Services ── */}
+      <section className="section-padding bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            overline="Our Services"
+            title="Everything You Need to Land Your Dream Job"
+            subtitle="End-to-end career support from resume to offer letter."
+          />
+          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((s, i) => (
+              <ScrollReveal key={s.title} delay={i * 0.07}>
+                <motion.div
+                  whileHover={{ y: -4 }}
+                  className="bg-white rounded-2xl border border-surface-200 shadow-card hover:shadow-card-hover transition-all p-6"
+                >
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center mb-4 shadow-lg`}>
+                    <s.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="font-heading font-bold text-navy-900 mb-2">{s.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{s.desc}</p>
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
 
-              <ResumeUploadForm
-                job={showApplication}
-                compact
-                onSuccess={() => setTimeout(() => setShowApplication(null), 3500)}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* ── How It Works ── */}
+      <section id="how-it-works" className="section-padding bg-gradient-to-b from-surface-50 to-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            overline="Our Process"
+            title="Your Path to Your Dream Job"
+            subtitle="A proven 8-step process that has helped 2,400+ professionals land top IT roles."
+          />
+          <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {steps.map((step, i) => (
+              <ScrollReveal key={step.num} delay={i * 0.06}>
+                <div className="relative bg-white rounded-2xl border border-surface-200 shadow-card p-5 hover:shadow-card-hover transition-all hover:-translate-y-1 duration-300">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-heading font-bold text-sm mb-4 shadow-lg shadow-brand-500/20">
+                    {step.num}
+                  </div>
+                  <h3 className="font-heading font-semibold text-navy-900 text-sm mb-2">{step.title}</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">{step.desc}</p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+      {/* ── Why Choose Us ── */}
+      <section className="section-padding bg-surface-50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            overline="Why VDORT"
+            title="What Sets Us Apart"
+            subtitle="We don't just find you a job — we build your career."
+          />
+          <div className="mt-12 grid sm:grid-cols-2 gap-6">
+            {[
+              { icon: Users, title: 'Personalized Approach', desc: 'We understand your unique skills and goals, tailoring every step of the process specifically for you.' },
+              { icon: BadgeCheck, title: 'Best-in-Class Service', desc: 'Deep recruiter connections and comprehensive understanding of the IT hiring landscape.' },
+              { icon: Briefcase, title: 'Increased Efficiency', desc: 'Save time — let us handle the job search while you focus on upskilling and interviews.' },
+              { icon: Star, title: 'Stress-Free Experience', desc: 'Our team supports you at every stage so you never have to navigate the job market alone.' },
+            ].map((item, i) => (
+              <ScrollReveal key={item.title} delay={i * 0.1}>
+                <div className="flex gap-4 bg-white rounded-2xl border border-surface-200 shadow-card p-6 hover:shadow-card-hover transition-all">
+                  <div className="w-12 h-12 rounded-xl bg-brand-50 flex items-center justify-center shrink-0">
+                    <item.icon className="w-6 h-6 text-brand-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-heading font-bold text-navy-900 mb-1">{item.title}</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA Banner ── */}
+      <section className="py-16 bg-gradient-to-r from-brand-600 via-brand-500 to-accent-400">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="font-heading font-bold text-2xl sm:text-3xl text-white mb-4">
+            Ready to Start Your Journey?
+          </h2>
+          <p className="text-brand-100 mb-8 max-w-xl mx-auto">
+            Join thousands of IT professionals who trusted VDORT to land their next big opportunity.
+          </p>
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-white text-brand-600 rounded-xl font-bold hover:bg-brand-50 transition-all shadow-lg min-h-[52px]"
+          >
+            Login / Sign Up <ArrowRight className="w-5 h-5" />
+          </Link>
+        </div>
+      </section>
     </>
   );
 }

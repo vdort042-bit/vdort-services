@@ -1,9 +1,14 @@
 import { Router } from 'express';
 import { v4 as uuid } from 'uuid';
-import { applications, jobs } from '../store/firestoreStore.js';
+import path from 'path';
+import { applications, jobs, notifications } from '../store/firestoreStore.js';
 import { authenticate, authorize } from '../middleware/auth.js';
-import { uploadResume } from '../middleware/upload.js';
+import { authenticateFirebase } from '../middleware/firebaseAuth.js';
+import { uploadResume, uploadDir } from '../middleware/upload.js';
 import { computeATSScore } from '../utils/atsScorer.js';
+import { sendResumeNotification } from '../utils/emailService.js';
+import { getExpiresAt } from '../utils/cleanupExpiredResumes.js';
+import { createStatusNotification } from '../utils/notificationHelper.js';
 
 const router = Router();
 
@@ -15,7 +20,7 @@ router.post('/', (req, res, next) => {
   });
 }, async (req, res) => {
   try {
-    const { jobId, name, email, phone, experience, message } = req.body;
+    const { jobId, name, email, phone, experience, skills, message, userId } = req.body;
 
     if (!name || !email) {
       return res.status(400).json({ success: false, message: 'Name and email are required' });
@@ -23,8 +28,9 @@ router.post('/', (req, res, next) => {
 
     const job = jobId ? await jobs.get(jobId) : null;
     const resumeUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const createdAt = new Date().toISOString();
 
-    const partial = { name, email, phone, experience, message, resumeUrl };
+    const partial = { name, email, phone, experience, skills, message, resumeUrl };
 
     // Compute ATS score from form data + job requirements
     let atsResult = { score: 0, label: 'Needs Review', breakdown: {}, matchedSkills: [], totalSkills: 0 };
@@ -37,12 +43,14 @@ router.post('/', (req, res, next) => {
     const application = {
       id: `app_${uuid().slice(0, 8)}`,
       jobId: jobId || null,
-      jobTitle: job?.title || 'General Application',
+      jobTitle: job?.title || 'Resume Submission',
       clientId: job?.clientId || null,
+      userId: userId || null,
       name,
-      email,
+      email: email.toLowerCase().trim(),
       phone: phone || '',
       experience: experience || '',
+      skills: skills || '',
       message: message || '',
       resumeUrl,
       status: 'new',
@@ -51,7 +59,8 @@ router.post('/', (req, res, next) => {
       atsBreakdown: atsResult.breakdown,
       matchedSkills: atsResult.matchedSkills,
       totalSkills: atsResult.totalSkills,
-      createdAt: new Date().toISOString(),
+      createdAt,
+      expiresAt: getExpiresAt(),
     };
 
     await applications.create(application);
@@ -60,11 +69,26 @@ router.post('/', (req, res, next) => {
       try { await jobs.incrementApplications(jobId); } catch (_) { /* non-fatal */ }
     }
 
+    // Send email with all fields + resume attachment to vdort042@gmail.com
+    let emailSent = false;
+    if (req.file) {
+      const resumePath = path.join(uploadDir, req.file.filename);
+      try {
+        await sendResumeNotification(application, resumePath, req.file.originalname);
+        emailSent = true;
+      } catch (emailErr) {
+        console.warn('Resume email failed:', emailErr.message);
+      }
+    }
+
     res.status(201).json({
       success: true,
       data: application,
       ats: atsResult,
-      message: 'Application submitted successfully',
+      emailSent,
+      message: emailSent
+        ? 'Application submitted successfully'
+        : 'Application saved. Email alert not sent — check server SMTP_PASS in .env',
     });
   } catch (err) {
     console.error('Application submit error:', err);
@@ -95,12 +119,34 @@ router.get('/client', authenticate, authorize('client'), async (req, res) => {
   }
 });
 
+// Student: own resume submissions (for notifications)
+router.get('/mine', authenticateFirebase, async (req, res) => {
+  try {
+    const { uid, email } = req.firebaseUser;
+    const list = await applications.listForUser(uid, email);
+    res.json({ success: true, data: list });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 // Update application status (admin or client)
 router.patch('/:id/status', authenticate, authorize('admin', 'client'), async (req, res) => {
   try {
     const { status } = req.body;
+    const existing = await applications.get(req.params.id);
+    if (!existing) return res.status(404).json({ success: false, message: 'Application not found' });
+
     const updated = await applications.updateStatus(req.params.id, status);
-    if (!updated) return res.status(404).json({ success: false, message: 'Application not found' });
+
+    if (status && status !== existing.status) {
+      try {
+        await createStatusNotification(notifications, updated, status);
+      } catch (notifErr) {
+        console.warn('Notification create failed:', notifErr.message);
+      }
+    }
+
     res.json({ success: true, data: updated });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -110,6 +156,7 @@ router.patch('/:id/status', authenticate, authorize('admin', 'client'), async (r
 // Delete application
 router.delete('/:id', authenticate, authorize('admin'), async (req, res) => {
   try {
+    await notifications.deleteByApplication(req.params.id);
     await applications.delete(req.params.id);
     res.json({ success: true, message: 'Application deleted' });
   } catch (err) {

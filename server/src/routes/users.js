@@ -76,20 +76,48 @@ router.delete('/clients/:id', authenticate, authorize('admin'), async (req, res)
 
 // ── Students (Firebase Auth users) ──────────────────────────────
 
-// List all Firebase Auth users (candidates/students)
+// List registered candidates (Firestore profile + Firebase Auth status)
 router.get('/students', authenticate, authorize('admin'), async (req, res) => {
   try {
-    const result = await getAuth().listUsers(1000);
-    const students = result.users.map((u) => ({
-      uid: u.uid,
-      email: u.email || '',
-      displayName: u.displayName || 'No Name',
-      photoURL: u.photoURL || null,
-      emailVerified: u.emailVerified,
-      disabled: u.disabled,
-      createdAt: u.metadata.creationTime,
-      lastLoginAt: u.metadata.lastSignInTime || null,
-    }));
+    const snap = await getDb().collection('users').where('role', '==', 'student').get();
+
+    let authMap = {};
+    try {
+      const result = await getAuth().listUsers(1000);
+      result.users.forEach((u) => { authMap[u.uid] = u; });
+    } catch {
+      // Auth metadata optional
+    }
+
+    const students = snap.docs.map((d) => {
+      const u = d.data();
+      const auth = authMap[d.id];
+      const displayName = [u.firstName, u.middleName, u.lastName].filter(Boolean).join(' ')
+        || auth?.displayName
+        || u.email
+        || 'No Name';
+      return {
+        uid: d.id,
+        email: u.email || auth?.email || '',
+        displayName,
+        phone: u.phone || '',
+        photoURL: auth?.photoURL || null,
+        emailVerified: auth?.emailVerified || false,
+        disabled: auth?.disabled || false,
+        createdAt: u.createdAt || auth?.metadata?.creationTime || null,
+        lastLoginAt: auth?.metadata?.lastSignInTime || null,
+      };
+    }).sort((a, b) => {
+      const toMs = (v) => {
+        if (!v) return 0;
+        if (typeof v === 'string') return new Date(v).getTime();
+        if (v._seconds) return v._seconds * 1000;
+        if (v.seconds) return v.seconds * 1000;
+        return 0;
+      };
+      return toMs(b.createdAt) - toMs(a.createdAt);
+    });
+
     res.json({ success: true, data: students });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

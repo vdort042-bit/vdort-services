@@ -36,8 +36,8 @@ export default function AdminApplications() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="font-heading font-bold text-2xl text-navy-900">Applications</h2>
-          <p className="text-slate-500 text-sm">{apps.length} total applications</p>
+          <h2 className="font-heading font-bold text-2xl text-navy-900">Resume Submissions</h2>
+          <p className="text-slate-500 text-sm">{apps.length} total resume{apps.length !== 1 ? 's' : ''} submitted</p>
         </div>
         <select value={filter} onChange={(e) => setFilter(e.target.value)}
           className="px-4 py-2 rounded-xl border border-surface-200 text-sm outline-none focus:border-brand-500">
@@ -71,7 +71,8 @@ export default function AdminApplications() {
                   <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-500">
                     <span>{app.email}</span>
                     {app.phone && <span>{app.phone}</span>}
-                    <span>{app.experience} experience</span>
+                    {app.experience && <span>{app.experience} experience</span>}
+                    {app.skills && <span>{app.skills}</span>}
                   </div>
                   {app.message && <p className="text-sm text-slate-600 mt-2 line-clamp-2">{app.message}</p>}
                   {app.resumeUrl && (

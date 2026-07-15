@@ -41,7 +41,8 @@ export function AuthProvider({ children }) {
             }
           }
 
-          // Student — no JWT needed
+          // Student — Firebase auth only (clear stale admin JWT)
+          localStorage.removeItem('vdort_token');
           setUser({
             uid: firebaseUser.uid,
             id: firebaseUser.uid,
@@ -54,8 +55,20 @@ export function AuthProvider({ children }) {
             company: data.company || '',
             authType: 'firebase',
           });
-        } catch {
-          setUser(null);
+        } catch (err) {
+          console.error('Firestore user fetch error:', err);
+          localStorage.removeItem('vdort_token');
+          setUser({
+            uid: firebaseUser.uid,
+            id: firebaseUser.uid,
+            email: firebaseUser.email,
+            name: firebaseUser.displayName || firebaseUser.email,
+            firstName: '',
+            lastName: '',
+            phone: '',
+            role: 'student',
+            authType: 'firebase',
+          });
         }
       } else {
         // No Firebase user — check JWT (for admin@vdort.com / client@vdort.com)

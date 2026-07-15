@@ -14,36 +14,29 @@ export default function About() {
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[60vh] flex items-center gradient-hero overflow-hidden">
-        <ParticleBackground />
-        <div className="absolute inset-0 bg-gradient-to-b from-navy-950/40 via-transparent to-navy-950/80" />
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
+      <section className="pt-16 bg-gradient-to-br from-brand-600 via-brand-500 to-violet-600">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center">
           <motion.span
-            className="inline-block font-semibold text-sm tracking-[0.2em] uppercase mb-4 text-brand-400"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            className="inline-block text-xs font-bold uppercase tracking-widest text-white/80 mb-4"
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
           >
             About VDORT
           </motion.span>
           <motion.h1
-            className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-6"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl text-white mb-5 leading-tight"
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           >
             Value-Driven Opportunities,<br />
-            <span className="gradient-text">Recruitment & Talent</span>
+            <span className="text-yellow-300">Recruitment & Talent</span>
           </motion.h1>
           <motion.p
-            className="text-lg text-surface-300 max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
+            className="text-brand-100 max-w-2xl mx-auto text-base sm:text-lg"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
           >
-            Transforming how the world connects talent to opportunity through innovation, integrity, and intelligence.
+            Transforming how the world connects talent to opportunity through personalized support and deep industry expertise.
           </motion.p>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
+        <div className="h-10 bg-gradient-to-b from-transparent to-white" />
       </section>
 
       {/* Company Story */}

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight, LogIn } from 'lucide-react';
-import { NAV_LINKS } from '../../utils/constants';
-import Button from '../ui/Button';
+import { Menu, X, Phone, LogIn } from 'lucide-react';
+import { NAV_LINKS, COMPANY } from '../../utils/constants';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,7 +10,7 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -21,44 +20,33 @@ export default function Navbar() {
   }, [location.pathname]);
 
   return (
-    <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'glass-dark shadow-elevated py-3'
-          : 'bg-transparent py-4'
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${
+        scrolled ? 'shadow-md' : 'shadow-sm border-b border-gray-100'
       }`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-3 group flex-shrink-0">
-          <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-accent-400 flex items-center justify-center shadow-lg shadow-brand-500/30 group-hover:shadow-brand-500/50 transition-shadow duration-300">
-            <span className="text-white font-heading font-bold text-xl">V</span>
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+
+        {/* Brand text */}
+        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shadow-sm">
+            <span className="text-white font-heading font-bold text-sm">V</span>
           </div>
-          <div>
-            <span className="text-white font-heading font-bold text-xl tracking-tight">
-              VDORT
-            </span>
-            <span className="hidden sm:block text-[10px] text-surface-300 tracking-[0.15em] uppercase -mt-0.5">
-              Services
-            </span>
-          </div>
+          <span className="text-navy-900 font-heading font-bold text-lg tracking-tight">VDORT</span>
         </Link>
 
-        {/* Desktop Nav Links */}
-        <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
+        {/* Desktop Nav */}
+        <div className="hidden lg:flex items-center gap-1">
           {NAV_LINKS.map((link) => (
             <NavLink
               key={link.path}
               to={link.path}
               end={link.path === '/'}
               className={({ isActive }) =>
-                `px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap ${
+                `px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                   isActive
-                    ? 'text-brand-400 bg-brand-500/10'
-                    : 'text-surface-300 hover:text-white hover:bg-white/5'
+                    ? 'text-brand-600 bg-brand-50'
+                    : 'text-slate-600 hover:text-brand-600 hover:bg-brand-50/60'
                 }`
               }
             >
@@ -67,23 +55,27 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Right CTAs */}
-        <div className="hidden lg:flex items-center gap-2 flex-shrink-0">
-          <Link to="/login">
-            <Button variant="ghost" size="sm" icon={LogIn}>
-              Login
-            </Button>
-          </Link>
-          <Link to="/contact">
-            <Button variant="primary" size="sm" iconRight={ArrowRight}>
-              Get Started
-            </Button>
+        {/* Desktop CTAs */}
+        <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
+          <a
+            href={`tel:${COMPANY.phone}`}
+            className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-brand-600 transition-colors"
+          >
+            <Phone className="w-4 h-4 text-brand-500" />
+            <span className="hidden xl:inline">{COMPANY.phone}</span>
+            <span className="xl:hidden">Call Us</span>
+          </a>
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-500 text-white rounded-lg text-sm font-semibold hover:bg-brand-600 transition-colors shadow-sm shadow-brand-500/20 min-h-[38px]"
+          >
+            <LogIn className="w-4 h-4" /> Login
           </Link>
         </div>
 
         {/* Mobile Toggle */}
         <button
-          className="lg:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+          className="lg:hidden p-2 text-slate-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
@@ -95,17 +87,17 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="lg:hidden absolute top-full left-0 right-0 glass-dark border-t border-white/10 shadow-elevated"
+            className="lg:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-lg"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
           >
-            <div className="max-w-7xl mx-auto px-4 py-5 flex flex-col gap-1">
+            <div className="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-1">
               {NAV_LINKS.map((link, i) => (
                 <motion.div
                   key={link.path}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.04 }}
                 >
@@ -113,10 +105,10 @@ export default function Navbar() {
                     to={link.path}
                     end={link.path === '/'}
                     className={({ isActive }) =>
-                      `flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all duration-300 ${
+                      `flex items-center px-4 py-3 rounded-xl text-base font-medium transition-all ${
                         isActive
-                          ? 'text-brand-400 bg-brand-500/10'
-                          : 'text-surface-300 hover:text-white hover:bg-white/5'
+                          ? 'text-brand-600 bg-brand-50'
+                          : 'text-slate-700 hover:text-brand-600 hover:bg-brand-50/60'
                       }`
                     }
                   >
@@ -124,22 +116,25 @@ export default function Navbar() {
                   </NavLink>
                 </motion.div>
               ))}
-              <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-2">
-                <Link to="/login" className="block">
-                  <Button variant="secondary" size="md" icon={LogIn} className="w-full justify-center">
-                    Candidate Login
-                  </Button>
-                </Link>
-                <Link to="/contact">
-                  <Button variant="primary" size="md" iconRight={ArrowRight} className="w-full justify-center">
-                    Get Started
-                  </Button>
+              <div className="mt-3 pt-3 border-t border-gray-100 flex flex-col gap-2">
+                <a
+                  href={`tel:${COMPANY.phone}`}
+                  className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-gray-50 transition-colors"
+                >
+                  <Phone className="w-4 h-4 text-brand-500" />
+                  Call Us Now
+                </a>
+                <Link
+                  to="/login"
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-brand-500 text-white rounded-xl text-sm font-semibold hover:bg-brand-600 transition-colors"
+                >
+                  <LogIn className="w-4 h-4" /> Login
                 </Link>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </header>
   );
 }

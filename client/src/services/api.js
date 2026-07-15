@@ -1,7 +1,27 @@
 const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:5000/api' : '/api');
 
+async function getFirebaseToken() {
+  try {
+    const { auth } = await import('../firebase/firebase');
+    if (auth.authStateReady) await auth.authStateReady();
+    const user = auth.currentUser;
+    if (user) return await user.getIdToken(true);
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+async function getAuthToken() {
+  const jwt = localStorage.getItem('vdort_token');
+  if (jwt) return jwt;
+  return getFirebaseToken();
+}
+
 async function request(endpoint, options = {}) {
-  const token = localStorage.getItem('vdort_token');
+  const token = options.useFirebaseToken
+    ? await getFirebaseToken()
+    : await getAuthToken();
   const headers = { ...options.headers };
 
   if (!(options.body instanceof FormData)) {
@@ -60,6 +80,7 @@ export const api = {
   applications: {
     submit: (formData) => request('/applications', { method: 'POST', body: formData }),
     list: () => request('/applications'),
+    mine: () => request('/applications/mine', { useFirebaseToken: true }),
     clientList: () => request('/applications/client'),
     updateStatus: (id, status) =>
       request(`/applications/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
@@ -92,6 +113,7 @@ export const api = {
     client: () => request('/analytics/client'),
     recent: () => request('/analytics/recent'),
     chart: () => request('/analytics/chart'),
+    monthly: (year, month) => request(`/analytics/monthly?year=${year}&month=${month}`),
   },
 
   users: {
@@ -104,6 +126,12 @@ export const api = {
     setStudentStatus: (uid, disabled) =>
       request(`/users/students/${uid}/status`, { method: 'PATCH', body: JSON.stringify({ disabled }) }),
     deleteStudent: (uid) => request(`/users/students/${uid}`, { method: 'DELETE' }),
+  },
+
+  notifications: {
+    list: () => request('/notifications', { useFirebaseToken: true }),
+    markRead: (id) => request(`/notifications/${id}/read`, { method: 'PATCH', useFirebaseToken: true }),
+    markAllRead: () => request('/notifications/read-all', { method: 'PATCH', useFirebaseToken: true }),
   },
 };
 

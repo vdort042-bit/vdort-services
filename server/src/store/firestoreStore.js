@@ -1,4 +1,5 @@
 import { getDb } from '../config/firebase.js';
+import { toMillis } from '../utils/dateHelper.js';
 import {
   seedUsers, seedJobs, seedApplications,
   seedContacts, seedSubscribers, seedTestimonials,
@@ -139,13 +140,15 @@ export const applications = {
   },
 
   list: async ({ status, jobId, jobIds } = {}) => {
-    const snap = await getDb().collection('applications').orderBy('createdAt', 'desc').get();
-    let docs = toDocs(snap);
+    const snap = await getDb().collection('applications').get();
+    let docs = toDocs(snap).sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt));
     if (status)  docs = docs.filter((a) => a.status === status);
     if (jobId)   docs = docs.filter((a) => a.jobId === jobId);
     if (jobIds)  docs = docs.filter((a) => jobIds.includes(a.jobId));
     return docs;
   },
+
+  get: async (id) => toDoc(await getDb().collection('applications').doc(id).get()),
 
   updateStatus: async (id, status) => {
     await getDb().collection('applications').doc(id).update({ status });
@@ -157,11 +160,30 @@ export const applications = {
     return true;
   },
 
+  listExpired: async () => {
+    const now = new Date().toISOString();
+    const snap = await getDb().collection('applications').get();
+    return toDocs(snap).filter((a) => a.expiresAt && a.expiresAt <= now);
+  },
+
+  listForUser: async (userId, email) => {
+    const snap = await getDb().collection('applications').get();
+    const emailLower = (email || '').toLowerCase();
+    return toDocs(snap)
+      .filter((a) =>
+        (userId && a.userId === userId) ||
+        (emailLower && (a.email || '').toLowerCase() === emailLower)
+      )
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+
   count:    async () => (await getDb().collection('applications').get()).size,
   countNew: async () => (await getDb().collection('applications').where('status', '==', 'new').get()).size,
 
-  recent: async (limit = 5) =>
-    toDocs(await getDb().collection('applications').orderBy('createdAt', 'desc').limit(limit).get()),
+  recent: async (limit = 5) => {
+    const docs = await applications.list({});
+    return docs.slice(0, limit);
+  },
 };
 
 // ─── CONTACTS ─────────────────────────────────────────────────────────────────
@@ -243,4 +265,52 @@ export const testimonials = {
   },
 
   count: async () => (await getDb().collection('testimonials').get()).size,
+};
+
+// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+export const notifications = {
+  create: async (data) => {
+    await getDb().collection('notifications').doc(data.id).set(data);
+    return data;
+  },
+
+  deleteByApplication: async (applicationId) => {
+    const snap = await getDb().collection('notifications')
+      .where('applicationId', '==', applicationId).get();
+    const batch = getDb().batch();
+    snap.docs.forEach((d) => batch.delete(d.ref));
+    if (!snap.empty) await batch.commit();
+  },
+
+  get: async (id) => toDoc(await getDb().collection('notifications').doc(id).get()),
+
+  listForUser: async (userId, email) => {
+    const snap = await getDb().collection('notifications').get();
+    const emailLower = (email || '').toLowerCase();
+    return toDocs(snap)
+      .filter((n) =>
+        (userId && n.userId === userId) ||
+        (emailLower && (n.email || '').toLowerCase() === emailLower)
+      )
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+
+  markRead: async (id) => {
+    await getDb().collection('notifications').doc(id).update({ read: true });
+  },
+
+  markAllRead: async (userId, email) => {
+    const snap = await getDb().collection('notifications').get();
+    const emailLower = (email || '').toLowerCase();
+    const unread = toDocs(snap).filter((n) =>
+      !n.read && (
+        (userId && n.userId === userId) ||
+        (emailLower && (n.email || '').toLowerCase() === emailLower)
+      )
+    );
+    if (!unread.length) return;
+    const batch = getDb().batch();
+    unread.forEach((n) => batch.update(getDb().collection('notifications').doc(n.id), { read: true }));
+    await batch.commit();
+  },
 };

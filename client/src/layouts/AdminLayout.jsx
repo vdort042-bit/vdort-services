@@ -2,19 +2,15 @@ import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  LayoutDashboard, Briefcase, FileText, Mail, Star, Bell,
+  LayoutDashboard, FileText,
   LogOut, Menu, X, ChevronRight, BarChart3, UserCog,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const navItems = [
-  { label: 'Dashboard',    path: '/admin',             icon: LayoutDashboard, end: true },
-  { label: 'Jobs',         path: '/admin/jobs',         icon: Briefcase },
-  { label: 'Applications', path: '/admin/applications', icon: FileText },
-  { label: 'Users',        path: '/admin/users',        icon: UserCog },
-  { label: 'Contacts',     path: '/admin/contacts',     icon: Mail },
-  { label: 'Subscribers',  path: '/admin/subscribers',  icon: Bell },
-  { label: 'Testimonials', path: '/admin/testimonials', icon: Star },
+  { label: 'Dashboard',   path: '/admin',              icon: LayoutDashboard, end: true },
+  { label: 'Resumes',     path: '/admin/applications', icon: FileText },
+  { label: 'Candidates',  path: '/admin/users',        icon: UserCog },
 ];
 
 export default function AdminLayout() {

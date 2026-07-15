@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Mail, Lock, ArrowRight, User, Phone, Users,
+  Mail, Lock, ArrowRight, User, Phone,
   Eye, EyeOff, UserPlus, LogIn, ChevronLeft
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import ParticleBackground from '../components/ui/ParticleBackground';
 import { auth, db } from '../firebase/firebase';
 import {
   createUserWithEmailAndPassword,
@@ -23,9 +22,7 @@ export default function Login() {
   useEffect(() => {
     if (!authLoading && user) {
       if (user.role === 'admin') navigate('/admin', { replace: true });
-      else if (user.role === 'client') navigate('/client', { replace: true });
-      else if (user.role === 'student') navigate('/student', { replace: true });
-      else navigate('/', { replace: true });
+      else navigate('/student', { replace: true });
     }
   }, [user, authLoading, navigate]);
 
@@ -74,22 +71,26 @@ export default function Login() {
         const userData = userDoc.data();
         const role = userData.role;
 
-        if (role === 'admin') navigate('/admin');
-        else if (role === 'client') navigate('/client');
-        else if (role === 'student') navigate('/student');
-        else navigate('/');
+        if (role === 'admin') navigate('/admin', { replace: true });
+        else navigate('/student', { replace: true });
       } else {
-        navigate('/student');
+        navigate('/student', { replace: true });
       }
     } catch (err) {
+      console.error('Login error:', err);
       if (
         err.code === 'auth/user-not-found' ||
         err.code === 'auth/wrong-password' ||
-        err.code === 'auth/invalid-credential'
+        err.code === 'auth/invalid-credential' ||
+        err.code === 'auth/invalid-email'
       ) {
-        setError('Invalid email or password');
+        setError('Invalid email or password. Please check and try again.');
+      } else if (err.code === 'auth/too-many-requests') {
+        setError('Too many failed attempts. Please wait a few minutes and try again.');
+      } else if (err.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection.');
       } else {
-        setError(err.message || 'Login failed');
+        setError(err.message || 'Login failed. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -107,15 +108,8 @@ export default function Login() {
       return;
     }
 
-    if (!selectedRole) {
-      setError('Please select your role — Candidate');
-      return;
-    }
-    // Client accounts are created by admin only
-    if (selectedRole === 'client') {
-      setError('Client accounts are created by the admin. Please contact VDORT to register as a client.');
-      return;
-    }
+    // All public signups are candidates
+    if (!selectedRole) setSelectedRole('student');
 
     setLoading(true);
 
@@ -136,31 +130,29 @@ export default function Login() {
         lastName: lastName.trim(),
         email: signUpEmail.trim(),
         phone: phone.trim(),
-        role: selectedRole,
+        role: 'student',
         createdAt: serverTimestamp(),
       };
 
       // Store in 'users' collection
       await setDoc(doc(db, 'users', uid), userData);
 
-      // Also store in role-specific collection (clients / students)
-      const roleCollection = selectedRole === 'client' ? 'clients' : 'students';
+      const roleCollection = 'students';
       await setDoc(doc(db, roleCollection, uid), userData);
 
-      setSuccess('Account created successfully! You can now sign in.');
-      // Reset form and switch to login
+      setSuccess('Account created! Redirecting to resume form...');
       resetSignUpForm();
-      setTimeout(() => {
-        setIsSignUp(false);
-        setSuccess('');
-      }, 2000);
+      setTimeout(() => navigate('/student', { replace: true }), 1000);
     } catch (err) {
+      console.error('Signup error:', err);
       if (err.code === 'auth/email-already-in-use') {
-        setError('This email is already registered');
+        setError('This email is already registered. Please login instead.');
       } else if (err.code === 'auth/weak-password') {
         setError('Password must be at least 6 characters');
+      } else if (err.code === 'permission-denied' || err.code === 'firestore/permission-denied') {
+        setError('Account created but profile save failed. Please login directly.');
       } else {
-        setError(err.message || 'Registration failed');
+        setError(err.message || 'Registration failed. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -239,30 +231,72 @@ export default function Login() {
 
   // ── Shared input styles ──
   const inputClass =
-    'w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-surface-300/50 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none text-sm transition-all duration-200';
+    'w-full pl-11 pr-4 py-3.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none text-sm transition-all duration-200';
+
+  const leftContent = isForgot
+    ? { heading: 'Reset Your Password', sub: 'Enter your registered email and we\'ll send you a reset link right away.', features: ['Quick & secure reset link', 'Check your spam folder too', 'Contact support if needed'] }
+    : isSignUp
+    ? { heading: 'Create Your Account', sub: 'Register to submit your resume and connect with VDORT recruitment team.', features: ['Upload resume in one step', 'Free registration', 'Team contacts you within 24 hours'] }
+    : { heading: 'Welcome back.', sub: 'Sign in to submit your resume and connect with VDORT.', features: ['Submit your resume', 'Quick & easy form', 'Team reviews within 24 hours'] };
 
   return (
-    <div className="min-h-screen gradient-hero flex items-center justify-center relative overflow-hidden py-8 px-4">
-      <ParticleBackground />
-      <div className="absolute inset-0 bg-navy-950/60" />
+    <div className="min-h-screen flex" style={{ background: '#0d1117' }}>
 
-      <motion.div
-        className="relative z-10 w-full max-w-lg"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        {/* VDORT Branding Header */}
-        <div className="text-center mb-6">
-          <Link to="/" className="inline-flex items-center gap-3 group mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-500 to-accent-400 flex items-center justify-center shadow-lg shadow-brand-500/40 group-hover:shadow-brand-500/60 transition-shadow">
-              <span className="text-white font-heading font-bold text-2xl">V</span>
-            </div>
-            <div className="text-left">
-              <span className="text-white font-heading font-bold text-2xl tracking-tight block">VDORT</span>
-              <span className="text-surface-300 text-xs tracking-widest uppercase">Services Pvt. Ltd.</span>
-            </div>
+      {/* ── Left Panel ── */}
+      <div className="hidden lg:flex lg:w-5/12 flex-col justify-between p-10 xl:p-14 relative overflow-hidden" style={{ background: '#161b22' }}>
+        {/* subtle grid pattern */}
+        <div className="absolute inset-0 opacity-5"
+          style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '40px 40px' }} />
+
+        <div className="relative z-10">
+          {/* Logo */}
+          <Link to="/">
+            <img src="/logo.png" alt="VDORT Services" className="h-20 w-auto object-contain mb-10" />
+          </Link>
+
+          {/* Dynamic heading */}
+          <AnimatePresence mode="wait">
+            <motion.div key={isForgot ? 'forgot' : isSignUp ? 'signup' : 'login'}
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h2 className="font-heading font-bold text-3xl xl:text-4xl text-white mb-4 leading-tight">
+                {leftContent.heading}
+              </h2>
+              <p className="text-slate-400 text-sm leading-relaxed mb-8 max-w-xs">
+                {leftContent.sub}
+              </p>
+              <ul className="space-y-4">
+                {leftContent.features.map((f, i) => (
+                  <li key={f} className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-full bg-brand-500/20 border border-brand-500/30 flex items-center justify-center text-xs text-brand-400 font-bold shrink-0">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="text-slate-300 text-sm font-medium">{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* ── Right Panel ── */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-10 overflow-y-auto">
+
+        {/* Mobile logo */}
+        <div className="lg:hidden mb-8">
+          <Link to="/">
+            <img src="/logo.png" alt="VDORT Services" className="h-14 w-auto object-contain" />
           </Link>
         </div>
+
+        <motion.div
+          className="w-full max-w-md"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
         <AnimatePresence mode="wait">
           {isForgot ? (
             /* ═══════════════════ FORGOT PASSWORD FORM ═══════════════════ */
@@ -272,10 +306,11 @@ export default function Login() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -40 }}
               transition={{ duration: 0.35 }}
-              className="glass-dark rounded-3xl p-8 md:p-10 border border-white/10 shadow-elevated"
+              className="rounded-2xl p-7 border border-white/8 shadow-2xl"
+              style={{ background: '#1c2128' }}
             >
               {/* Back to website */}
-              <Link to="/" className="inline-flex items-center gap-1.5 text-surface-300/70 hover:text-white text-xs font-medium mb-6 transition-colors group">
+              <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-white text-xs font-medium mb-6 transition-colors group">
                 <ChevronLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
                 Back to Website
               </Link>
@@ -360,24 +395,18 @@ export default function Login() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 40 }}
               transition={{ duration: 0.35 }}
-              className="glass-dark rounded-3xl p-8 md:p-10 border border-white/10 shadow-elevated"
+              className="rounded-2xl p-7 border border-white/8 shadow-2xl"
+              style={{ background: '#1c2128' }}
             >
               {/* Back to website */}
-              <Link to="/" className="inline-flex items-center gap-1.5 text-surface-300/70 hover:text-white text-xs font-medium mb-6 transition-colors group">
+              <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-white text-xs font-medium mb-6 transition-colors group">
                 <ChevronLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
                 Back to Website
               </Link>
               {/* Header */}
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-accent-400 flex items-center justify-center mx-auto mb-4 shadow-glow">
-                  <LogIn className="w-8 h-8 text-white" />
-                </div>
-                <h1 className="font-heading font-bold text-3xl text-white mb-2">
-                  Welcome Back
-                </h1>
-                <p className="text-surface-300 text-sm">
-                  Sign in to your VDORT account
-                </p>
+              <div className="mb-7">
+                <h1 className="font-heading font-bold text-2xl text-white mb-1">Sign In</h1>
+                <p className="text-slate-400 text-sm">Enter your credentials to access your dashboard</p>
               </div>
 
               {/* Error */}
@@ -392,12 +421,13 @@ export default function Login() {
               )}
 
               <form onSubmit={handleLogin} className="space-y-4" autoComplete="off">
-                {/* hidden inputs to trick browser autofill */}
                 <input type="text" name="fake-user" style={{ display: 'none' }} readOnly />
                 <input type="password" name="fake-pass" style={{ display: 'none' }} readOnly />
                 {/* Email */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Email</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-300" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                   <input
                     id="login-email"
                     type="email"
@@ -409,10 +439,18 @@ export default function Login() {
                     className={inputClass}
                   />
                 </div>
+                </div>
 
                 {/* Password */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Password</label>
+                    <button type="button" onClick={switchToForgot} className="text-brand-400 hover:text-brand-300 text-xs font-medium transition-colors">
+                      Forgot password?
+                    </button>
+                  </div>
                 <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-300" />
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                   <input
                     id="login-password"
                     type={showPassword ? 'text' : 'password'}
@@ -423,28 +461,11 @@ export default function Login() {
                     autoComplete="new-password"
                     className={`${inputClass} pr-11`}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-surface-300 hover:text-white transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
+                  <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors">
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-
-                {/* Forgot Password */}
-                <div className="flex justify-end">
-                  <button
-                    type="button"
-                    onClick={switchToForgot}
-                    className="text-brand-400 hover:text-brand-300 text-xs font-medium transition-colors"
-                  >
-                    Forgot password?
-                  </button>
                 </div>
 
                 {/* Sign In Button */}
@@ -495,24 +516,18 @@ export default function Login() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -40 }}
               transition={{ duration: 0.35 }}
-              className="glass-dark rounded-3xl p-8 md:p-10 border border-white/10 shadow-elevated"
+              className="rounded-2xl p-7 border border-white/8 shadow-2xl"
+              style={{ background: '#1c2128' }}
             >
               {/* Back to website */}
-              <Link to="/" className="inline-flex items-center gap-1.5 text-surface-300/70 hover:text-white text-xs font-medium mb-6 transition-colors group">
+              <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-white text-xs font-medium mb-6 transition-colors group">
                 <ChevronLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
                 Back to Website
               </Link>
               {/* Header */}
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-4 shadow-glow">
-                  <UserPlus className="w-8 h-8 text-white" />
-                </div>
-                <h1 className="font-heading font-bold text-3xl text-white mb-2">
-                  Create Account
-                </h1>
-                <p className="text-surface-300 text-sm">
-                  Join VDORT today
-                </p>
+              <div className="mb-7">
+                <h1 className="font-heading font-bold text-2xl text-white mb-1">Create Your Account</h1>
+                <p className="text-slate-400 text-sm">Start your journey to your dream IT job</p>
               </div>
 
               {/* Error / Success */}
@@ -593,73 +608,17 @@ export default function Login() {
                   <input
                     id="signup-phone"
                     type="tel"
-                    placeholder="Phone number"
+                    placeholder="Phone number (10 digits)"
                     value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                     required
+                    maxLength={10}
                     className={inputClass}
                   />
                 </div>
 
-                {/* Role Selection */}
-                <div>
-                  <p className="text-surface-300 text-xs font-medium mb-2 ml-1">Select your role</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {/* Client */}
-                    <button
-                      type="button"
-                      onClick={() => setSelectedRole('client')}
-                      className={`relative p-4 rounded-xl border transition-all duration-200 flex items-center gap-3 ${
-                        selectedRole === 'client'
-                          ? 'border-blue-500 bg-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.15)]'
-                          : 'border-white/10 bg-white/5 hover:bg-white/8 hover:border-white/20'
-                      }`}
-                    >
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        selectedRole === 'client' ? 'bg-gradient-to-br from-blue-500 to-cyan-500' : 'bg-white/10'
-                      }`}>
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                        </svg>
-                      </div>
-                      <div className="text-left min-w-0">
-                        <p className="text-white font-semibold text-sm">Client</p>
-                        <p className="text-surface-300 text-xs">Hire talent</p>
-                      </div>
-                      {selectedRole === 'client' && (
-                        <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center">
-                          <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
-                        </div>
-                      )}
-                    </button>
-
-                    {/* Student */}
-                    <button
-                      type="button"
-                      onClick={() => setSelectedRole('student')}
-                      className={`relative p-4 rounded-xl border transition-all duration-200 flex items-center gap-3 ${
-                        selectedRole === 'student'
-                          ? 'border-green-500 bg-green-500/10 shadow-[0_0_15px_rgba(34,197,94,0.15)]'
-                          : 'border-white/10 bg-white/5 hover:bg-white/8 hover:border-white/20'
-                      }`}
-                    >
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                        selectedRole === 'student' ? 'bg-gradient-to-br from-green-500 to-emerald-500' : 'bg-white/10'
-                      }`}>
-                        <Users className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="text-left min-w-0">
-                        <p className="text-white font-semibold text-sm">Candidate</p>
-                        <p className="text-surface-300 text-xs">Find jobs</p>
-                      </div>
-                      {selectedRole === 'student' && (
-                        <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
-                          <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
-                        </div>
-                      )}
-                    </button>
-                  </div>
-                </div>
+                {/* Role auto-assigned as candidate — hidden */}
+                <input type="hidden" value="student" />
 
                 {/* Password */}
                 <div className="relative">
@@ -744,23 +703,8 @@ export default function Login() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Footer Links */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="text-center mt-4 flex items-center justify-center gap-4 text-xs"
-        >
-          <Link to="/admin/login" className="text-surface-300/50 hover:text-surface-300 transition-colors">
-            Admin Portal
-          </Link>
-          <span className="text-white/15">·</span>
-          <Link to="/client/login" className="text-surface-300/50 hover:text-surface-300 transition-colors">
-            Client Portal
-          </Link>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 }
