@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, FileText,
@@ -13,10 +13,22 @@ const navItems = [
   { label: 'Candidates',  path: '/admin/users',        icon: UserCog },
 ];
 
+const pageTitles = {
+  '/admin': 'Dashboard',
+  '/admin/applications': 'Resume Submissions',
+  '/admin/users': 'Candidates',
+  '/admin/jobs': 'Job Management',
+  '/admin/contacts': 'Contact Inquiries',
+  '/admin/subscribers': 'Subscribers',
+  '/admin/testimonials': 'Testimonials',
+};
+
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const pageTitle = pageTitles[location.pathname] || 'Admin Panel';
 
   const handleLogout = async () => {
     await logout();
@@ -112,7 +124,7 @@ export default function AdminLayout() {
           </button>
           <div className="flex items-center gap-2 text-navy-900 min-w-0 flex-1">
             <BarChart3 className="w-5 h-5 text-brand-500 shrink-0" />
-            <h1 className="font-heading font-semibold text-base sm:text-lg truncate">Admin Dashboard</h1>
+            <h1 className="font-heading font-semibold text-base sm:text-lg truncate">{pageTitle}</h1>
           </div>
           <Link to="/" className="hidden sm:inline text-sm text-brand-500 hover:text-brand-600 font-medium shrink-0 whitespace-nowrap">
             View Website →

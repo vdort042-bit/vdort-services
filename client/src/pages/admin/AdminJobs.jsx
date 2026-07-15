@@ -53,15 +53,15 @@ export default function AdminJobs() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="font-heading font-bold text-2xl text-navy-900">Job Management</h2>
+          <h2 className="font-heading font-bold text-xl sm:text-2xl text-navy-900">Job Management</h2>
           <p className="text-slate-500 text-sm">{jobs.length} total positions</p>
         </div>
         <Button variant="primary" size="md" icon={Plus} onClick={openCreate} className="w-full sm:w-auto">Add Job</Button>
       </div>
 
       <div className="bg-white rounded-2xl border border-surface-200 shadow-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto -mx-px">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="bg-surface-50 border-b border-surface-200">
               <tr>
                 <th className="text-left px-6 py-4 font-semibold text-navy-900">Position</th>
@@ -100,9 +100,9 @@ export default function AdminJobs() {
 
       <AnimatePresence>
         {modal && (
-          <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/50 backdrop-blur-sm"
+          <motion.div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-navy-950/50 backdrop-blur-sm"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-elevated"
+            <motion.div className="bg-white rounded-t-2xl sm:rounded-2xl max-w-lg w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-elevated"
               initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }}>
               <div className="flex justify-between items-center mb-6">
                 <h3 className="font-heading font-bold text-lg text-navy-900">{modal === 'create' ? 'Add New Job' : 'Edit Job'}</h3>

@@ -18,7 +18,7 @@ export default function StudentDashboard() {
             <FileText className="w-5 h-5 text-green-600" />
           </div>
           <div>
-            <h2 className="font-heading font-bold text-2xl text-navy-900">
+            <h2 className="font-heading font-bold text-xl sm:text-2xl text-navy-900">
               Submit Your Resume
             </h2>
             <p className="text-slate-500 text-sm">

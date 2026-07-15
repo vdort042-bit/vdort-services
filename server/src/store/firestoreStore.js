@@ -11,6 +11,8 @@ const toDocs = (snap) => snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 
 // ─── SEED (runs once on startup if collection is empty) ───────────────────────
 export async function seedIfEmpty() {
+  if (process.env.NODE_ENV === 'production') return;
+
   const db = getDb();
   const seeds = [
     { col: 'users',        data: seedUsers        },

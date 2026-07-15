@@ -26,7 +26,26 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+const defaultOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+const extraOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+const clientOrigins = (process.env.CLIENT_URL || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+const allowedOrigins = [...new Set([...defaultOrigins, ...clientOrigins, ...extraOrigins])];
+
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    if (/^https:\/\/[\w-]+\.vercel\.app$/.test(origin)) return callback(null, true);
+    callback(null, false);
+  },
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -59,7 +78,6 @@ async function start() {
     console.log('✅ Seed data ready!');
 
     startCleanupScheduler();
-    console.log('⏰ Resume cleanup scheduler started (48h auto-delete)');
 
     const emailStatus = await verifyEmailConnection();
     if (emailStatus.ok) {

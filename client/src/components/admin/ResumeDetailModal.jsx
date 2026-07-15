@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, FileText, Download, Mail, Phone, Briefcase, MessageSquare, TrendingUp } from 'lucide-react';
+import { X, Download, Mail, Phone, Briefcase, MessageSquare, TrendingUp, ExternalLink } from 'lucide-react';
 import { getATSBadgeColor, getATSLabel } from '../../utils/atsScore';
-
-const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+import { downloadResume } from '../../utils/downloadResume';
+import { getResumeViewUrl, getResumeDownloadLabel } from '../../utils/resumeUrl';
 
 const statusColors = {
   new: 'bg-blue-50 text-blue-600',
@@ -14,14 +15,25 @@ const statusColors = {
 };
 
 export default function ResumeDetailModal({ app, onClose, onStatusChange, statuses }) {
+  const [downloading, setDownloading] = useState(false);
+
   if (!app) return null;
+
+  const handleDownload = async () => {
+    setDownloading(true);
+    try {
+      await downloadResume(app.id);
+    } catch (err) {
+      alert(err.message || 'Download failed');
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const atsScore = app.atsScore ?? 0;
   const badgeColor = getATSBadgeColor(atsScore);
   const atsLabel = app.atsLabel || getATSLabel(atsScore);
-  const resumeHref = app.resumeUrl
-    ? (app.resumeUrl.startsWith('http') ? app.resumeUrl : `${API_BASE}${app.resumeUrl}`)
-    : null;
+  const resumeHref = getResumeViewUrl(app.resumeUrl);
 
   return (
     <AnimatePresence>
@@ -90,16 +102,26 @@ export default function ResumeDetailModal({ app, onClose, onStatusChange, status
             )}
 
             {resumeHref && (
-              <a
-                href={resumeHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-brand-500 text-white font-semibold hover:bg-brand-600 transition-colors"
-              >
-                <FileText className="w-5 h-5" />
-                View / Download Resume
-                <Download className="w-4 h-4" />
-              </a>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <a
+                  href={resumeHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 py-3 rounded-xl border border-brand-200 text-brand-600 font-semibold hover:bg-brand-50 transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  View Resume
+                </a>
+                <button
+                  type="button"
+                  onClick={handleDownload}
+                  disabled={downloading}
+                  className="flex items-center justify-center gap-2 py-3 rounded-xl bg-brand-500 text-white font-semibold hover:bg-brand-600 transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  <Download className="w-4 h-4" />
+                  {downloading ? 'Downloading...' : getResumeDownloadLabel(app.resumeUrl)}
+                </button>
+              </div>
             )}
 
             {onStatusChange && statuses && (

@@ -22,7 +22,7 @@ function getTransporter() {
   return transporter;
 }
 
-export async function sendResumeNotification(application, resumeFilePath, originalFileName) {
+export async function sendResumeNotification(application, resumeFilePath, originalFileName, resumeUrl = null) {
   const transport = getTransporter();
   const adminEmail = process.env.ADMIN_EMAIL || 'vdort042@gmail.com';
 
@@ -50,7 +50,7 @@ export async function sendResumeNotification(application, resumeFilePath, origin
     `Submitted On:   ${application.createdAt}`,
     `Application ID: ${application.id}`,
     '',
-    'Resume file is attached to this email.',
+    resumeFilePath ? 'Resume file is attached to this email.' : `Resume link: ${resumeUrl || '—'}`,
   ].join('\n');
 
   const row = (label, value) =>
@@ -76,7 +76,7 @@ export async function sendResumeNotification(application, resumeFilePath, origin
           ${row('ATS Score', atsScore)}
           ${row('Submitted', application.createdAt)}
         </table>
-        <p style="margin-top:16px;color:#64748b;font-size:13px;">📎 Resume attached below.</p>
+        <p style="margin-top:16px;color:#64748b;font-size:13px;">${resumeFilePath && fs.existsSync(resumeFilePath) ? '📎 Resume attached below.' : resumeUrl ? `📎 <a href="${resumeUrl}">View resume online</a>` : 'No resume file.'}</p>
       </div>
     `,
   };

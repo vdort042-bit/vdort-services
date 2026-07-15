@@ -14,7 +14,7 @@ export async function cleanupExpiredResumes() {
     if (!expired.length) return;
 
     for (const app of expired) {
-      if (app.resumeUrl) {
+      if (app.resumeUrl && !app.resumeUrl.startsWith('http')) {
         const filename = path.basename(app.resumeUrl);
         const filePath = path.join(uploadDir, filename);
         if (fs.existsSync(filePath)) {
@@ -31,11 +31,15 @@ export async function cleanupExpiredResumes() {
 }
 
 export function startCleanupScheduler() {
-  // Run immediately on startup, then every hour
+  if (process.env.NODE_ENV === 'production' || process.env.DISABLE_RESUME_CLEANUP === 'true') {
+    console.log('⏰ Resume auto-delete disabled (production)');
+    return;
+  }
   cleanupExpiredResumes();
   setInterval(cleanupExpiredResumes, 60 * 60 * 1000);
 }
 
 export function getExpiresAt() {
+  if (process.env.NODE_ENV === 'production') return null;
   return new Date(Date.now() + HOURS_48_MS).toISOString();
 }

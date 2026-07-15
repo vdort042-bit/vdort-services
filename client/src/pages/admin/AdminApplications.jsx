@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
-import { FileText, Download, TrendingUp } from 'lucide-react';
+import { Download, TrendingUp, ExternalLink } from 'lucide-react';
 import api from '../../services/api';
 import Loader from '../../components/ui/Loader';
 import { getATSBadgeColor, getATSLabel } from '../../utils/atsScore';
+import { getApiOrigin } from '../../config/apiConfig';
+import { downloadResume } from '../../utils/downloadResume';
+import { getResumeViewUrl, getResumeDownloadLabel } from '../../utils/resumeUrl';
 
 const statuses = ['new', 'reviewing', 'shortlisted', 'interviewed', 'hired', 'rejected'];
 
@@ -10,6 +13,7 @@ export default function AdminApplications() {
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
+  const [downloadingId, setDownloadingId] = useState(null);
 
   const load = () => {
     api.applications.list().then((res) => setApps(res.data)).catch(console.error).finally(() => setLoading(false));
@@ -28,6 +32,17 @@ export default function AdminApplications() {
     load();
   };
 
+  const handleDownload = async (app) => {
+    setDownloadingId(app.id);
+    try {
+      await downloadResume(app.id);
+    } catch (err) {
+      alert(err.message || 'Download failed');
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
   const filtered = filter ? apps.filter((a) => a.status === filter) : apps;
 
   if (loading) return <Loader />;
@@ -40,7 +55,7 @@ export default function AdminApplications() {
           <p className="text-slate-500 text-sm">{apps.length} total resume{apps.length !== 1 ? 's' : ''} submitted</p>
         </div>
         <select value={filter} onChange={(e) => setFilter(e.target.value)}
-          className="px-4 py-2 rounded-xl border border-surface-200 text-sm outline-none focus:border-brand-500">
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-surface-200 text-sm outline-none focus:border-brand-500">
           <option value="">All Statuses</option>
           {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
@@ -76,14 +91,25 @@ export default function AdminApplications() {
                   </div>
                   {app.message && <p className="text-sm text-slate-600 mt-2 line-clamp-2">{app.message}</p>}
                   {app.resumeUrl && (
-                    <a
-                      href={app.resumeUrl.startsWith('http') ? app.resumeUrl : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${app.resumeUrl}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 mt-3 text-sm text-brand-500 hover:text-brand-600 font-medium"
-                    >
-                      <FileText className="w-4 h-4" /> View Resume <Download className="w-3.5 h-3.5" />
-                    </a>
+                    <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-2 sm:gap-3 mt-3">
+                      <a
+                        href={getResumeViewUrl(app.resumeUrl)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-sm text-brand-500 hover:text-brand-600 font-medium min-h-[44px]"
+                      >
+                        <ExternalLink className="w-4 h-4" /> View Resume
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => handleDownload(app)}
+                        disabled={downloadingId === app.id}
+                        className="inline-flex items-center gap-1.5 text-sm text-navy-900 hover:text-brand-600 font-medium disabled:opacity-50 cursor-pointer min-h-[44px]"
+                      >
+                        <Download className="w-4 h-4" />
+                        {downloadingId === app.id ? 'Downloading...' : getResumeDownloadLabel(app.resumeUrl)}
+                      </button>
+                    </div>
                   )}
                 </div>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full lg:w-auto">

@@ -22,17 +22,17 @@ export default function AdminContacts() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-heading font-bold text-2xl text-navy-900">Contact Inquiries</h2>
+        <h2 className="font-heading font-bold text-xl sm:text-2xl text-navy-900">Contact Inquiries</h2>
         <p className="text-slate-500 text-sm">{contacts.length} total inquiries</p>
       </div>
 
       <div className="space-y-4">
         {contacts.map((c) => (
-          <div key={c.id} className="bg-white rounded-2xl border border-surface-200 p-6 shadow-card">
-            <div className="flex flex-col lg:flex-row lg:items-start gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h3 className="font-heading font-semibold text-navy-900">{c.name}</h3>
+          <div key={c.id} className="bg-white rounded-2xl border border-surface-200 p-4 sm:p-6 shadow-card">
+            <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                  <h3 className="font-heading font-semibold text-navy-900 break-words">{c.name}</h3>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
                     c.type === 'client' ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600'
                   }`}>{c.type}</span>
@@ -46,7 +46,7 @@ export default function AdminContacts() {
                 </div>
               </div>
               <select value={c.status} onChange={(e) => updateStatus(c.id, e.target.value)}
-                className="px-3 py-2 rounded-xl border border-surface-200 text-sm outline-none shrink-0">
+                className="w-full sm:w-auto px-3 py-2.5 rounded-xl border border-surface-200 text-sm outline-none shrink-0 min-h-[44px]">
                 <option value="new">new</option>
                 <option value="contacted">contacted</option>
                 <option value="resolved">resolved</option>

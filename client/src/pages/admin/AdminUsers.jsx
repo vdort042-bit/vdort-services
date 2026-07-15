@@ -119,7 +119,7 @@ export default function AdminUsers() {
           {filtered.map((student, i) => (
             <div
               key={student.uid}
-              className={`flex items-center gap-4 px-5 py-4 hover:bg-surface-50 transition-colors ${
+              className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-surface-50 transition-colors ${
                 i < filtered.length - 1 ? 'border-b border-surface-100' : ''
               }`}
             >
@@ -142,19 +142,19 @@ export default function AdminUsers() {
                     <span className="text-xs bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-medium">Disabled</span>
                   )}
                 </div>
-                <div className="flex items-center gap-3 text-xs text-surface-400 mt-0.5">
-                  <span className="flex items-center gap-1 break-all">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-surface-400 mt-0.5">
+                  <span className="flex items-center gap-1 break-all min-w-0">
                     <Mail className="w-3 h-3 shrink-0" />
                     {student.email}
                   </span>
-                  <span className="hidden sm:flex items-center gap-1">
+                  <span className="flex items-center gap-1 shrink-0">
                     <Calendar className="w-3 h-3" />
                     Joined {fmt(student.createdAt)}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-1 flex-shrink-0">
+              <div className="flex items-center justify-end sm:justify-start gap-1 flex-shrink-0 self-end sm:self-center">
                 <button
                   onClick={() => handleToggle(student)}
                   disabled={actionLoading === student.uid}

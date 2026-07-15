@@ -38,12 +38,12 @@ export default function AdminTestimonials() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="font-heading font-bold text-2xl text-navy-900">Testimonials</h2>
+          <h2 className="font-heading font-bold text-xl sm:text-2xl text-navy-900">Testimonials</h2>
           <p className="text-slate-500 text-sm">{items.length} testimonials</p>
         </div>
-        <Button variant="primary" size="sm" icon={Plus} onClick={() => setModal(true)}>Add</Button>
+        <Button variant="primary" size="sm" icon={Plus} onClick={() => setModal(true)} className="w-full sm:w-auto">Add</Button>
       </div>
 
       <div className="grid md:grid-cols-2 gap-5">

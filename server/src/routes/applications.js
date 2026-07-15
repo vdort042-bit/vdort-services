@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { v4 as uuid } from 'uuid';
 import path from 'path';
+import fs from 'fs';
 import { applications, jobs, notifications } from '../store/firestoreStore.js';
 import { authenticate, authorize } from '../middleware/auth.js';
 import { authenticateFirebase } from '../middleware/firebaseAuth.js';
@@ -9,8 +10,73 @@ import { computeATSScore } from '../utils/atsScorer.js';
 import { sendResumeNotification } from '../utils/emailService.js';
 import { getExpiresAt } from '../utils/cleanupExpiredResumes.js';
 import { createStatusNotification } from '../utils/notificationHelper.js';
+import { persistResume } from '../utils/resumeStorage.js';
 
 const router = Router();
+
+const MIME_BY_EXT = {
+  '.pdf': 'application/pdf',
+  '.doc': 'application/msword',
+  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+};
+
+function sanitizeDownloadName(name) {
+  return (name || 'Candidate').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_') || 'Candidate';
+}
+
+function getResumeExtension(resumeUrl, filePath) {
+  if (filePath) return path.extname(filePath).toLowerCase() || '.pdf';
+  try {
+    const ext = path.extname(new URL(resumeUrl).pathname).toLowerCase();
+    return ext || '.pdf';
+  } catch {
+    return '.pdf';
+  }
+}
+
+// Admin/Client: download resume as attachment (PDF when uploaded as PDF)
+router.get('/:id/resume/download', authenticate, authorize('admin', 'client'), async (req, res) => {
+  try {
+    const app = await applications.get(req.params.id);
+    if (!app) return res.status(404).json({ success: false, message: 'Application not found' });
+    if (!app.resumeUrl) return res.status(404).json({ success: false, message: 'No resume attached' });
+
+    if (req.user.role === 'client') {
+      const job = app.jobId ? await jobs.get(app.jobId) : null;
+      if (!job || job.clientId !== req.user.id) {
+        return res.status(403).json({ success: false, message: 'Access denied' });
+      }
+    }
+
+    const baseName = `${sanitizeDownloadName(app.name)}_Resume`;
+
+    if (app.resumeUrl.startsWith('http')) {
+      const remoteRes = await fetch(app.resumeUrl);
+      if (!remoteRes.ok) {
+        return res.status(404).json({ success: false, message: 'Resume file not found' });
+      }
+      const ext = getResumeExtension(app.resumeUrl);
+      const buffer = Buffer.from(await remoteRes.arrayBuffer());
+      res.setHeader('Content-Type', MIME_BY_EXT[ext] || 'application/octet-stream');
+      res.setHeader('Content-Disposition', `attachment; filename="${baseName}${ext}"`);
+      return res.send(buffer);
+    }
+
+    const filename = path.basename(app.resumeUrl);
+    const filePath = path.join(uploadDir, filename);
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ success: false, message: 'Resume file not found on server' });
+    }
+
+    const ext = getResumeExtension(app.resumeUrl, filePath);
+    res.setHeader('Content-Type', MIME_BY_EXT[ext] || 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="${baseName}${ext}"`);
+    return res.sendFile(filePath);
+  } catch (err) {
+    console.error('Resume download error:', err);
+    res.status(500).json({ success: false, message: err.message || 'Failed to download resume' });
+  }
+});
 
 // Public: submit application (multer error handler wraps upload)
 router.post('/', (req, res, next) => {
@@ -27,7 +93,11 @@ router.post('/', (req, res, next) => {
     }
 
     const job = jobId ? await jobs.get(jobId) : null;
-    const resumeUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    let resumeUrl = null;
+    if (req.file) {
+      const resumePath = path.join(uploadDir, req.file.filename);
+      resumeUrl = await persistResume(resumePath, req.file.originalname);
+    }
     const createdAt = new Date().toISOString();
 
     const partial = { name, email, phone, experience, skills, message, resumeUrl };
@@ -73,8 +143,13 @@ router.post('/', (req, res, next) => {
     let emailSent = false;
     if (req.file) {
       const resumePath = path.join(uploadDir, req.file.filename);
+      const attachPath = fs.existsSync(resumePath) ? resumePath : null;
       try {
-        await sendResumeNotification(application, resumePath, req.file.originalname);
+        if (attachPath) {
+          await sendResumeNotification(application, attachPath, req.file.originalname);
+        } else {
+          await sendResumeNotification(application, null, req.file.originalname, resumeUrl);
+        }
         emailSent = true;
       } catch (emailErr) {
         console.warn('Resume email failed:', emailErr.message);

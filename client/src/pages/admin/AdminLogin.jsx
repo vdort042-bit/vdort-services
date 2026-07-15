@@ -50,8 +50,9 @@ export default function AdminLogin() {
     setError(''); setSuccess(''); setLoading(true);
     try {
       const res = await api.auth.forgotPassword(fpEmail);
-      if (res.resetToken) {
-        setFpToken(res.resetToken);
+      const token = res.resetToken || res.devToken;
+      if (token) {
+        setFpToken(token);
         setFpStep('forgot-reset');
       } else {
         setSuccess(res.message);
