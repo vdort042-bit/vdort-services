@@ -30,7 +30,7 @@ export default function RegisteredCandidatesModal({ open, onClose }) {
             onClick={onClose}
           />
           <motion.div
-            className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[85vh] flex flex-col"
+            className="relative bg-white rounded-2xl shadow-2xl w-[calc(100%-2rem)] max-w-md max-h-[85vh] flex flex-col mx-4"
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -71,7 +71,7 @@ export default function RegisteredCandidatesModal({ open, onClose }) {
                   <tbody className="divide-y divide-surface-100">
                     {students.map((s) => (
                       <tr key={s.uid} className="hover:bg-surface-50 transition-colors">
-                        <td className="px-6 py-3.5 text-slate-600">{s.email || '—'}</td>
+                        <td className="px-4 sm:px-6 py-3.5 text-slate-600 break-all">{s.email || '—'}</td>
                       </tr>
                     ))}
                   </tbody>

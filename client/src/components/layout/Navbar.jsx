@@ -35,8 +35,8 @@ export default function Navbar() {
           <span className="text-navy-900 font-heading font-bold text-lg tracking-tight">VDORT</span>
         </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-1">
+        {/* Tablet+ Nav */}
+        <div className="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((link) => (
             <NavLink
               key={link.path}
@@ -55,8 +55,8 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Desktop CTAs */}
-        <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
+        {/* Tablet+ CTAs */}
+        <div className="hidden md:flex items-center gap-2 lg:gap-3 flex-shrink-0">
           <a
             href={`tel:${COMPANY.phone}`}
             className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-brand-600 transition-colors"
@@ -75,7 +75,7 @@ export default function Navbar() {
 
         {/* Mobile Toggle */}
         <button
-          className="lg:hidden p-2 text-slate-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+          className="md:hidden p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
@@ -87,7 +87,7 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="lg:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-lg"
+            className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-lg max-h-[calc(100vh-4rem)] overflow-y-auto"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}

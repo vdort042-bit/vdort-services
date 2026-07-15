@@ -190,7 +190,7 @@ export default function Home() {
       {/* ── Stats ── */}
       <section className="bg-gray-50 pb-16 pt-4">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {stats.map((s, i) => (
               <ScrollReveal key={s.label} delay={i * 0.08}>
                 <div className={`${s.bg} rounded-2xl p-5 text-center border border-white shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5`}>
@@ -300,7 +300,7 @@ export default function Home() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.15}>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { icon: Users, title: 'Personalized Approach', desc: 'Tailored to your unique skills and career goals.', color: 'bg-violet-50 text-violet-600', border: 'border-violet-100' },
                   { icon: BadgeCheck, title: 'Expert Network', desc: 'Deep recruiter connections in IT hiring.', color: 'bg-emerald-50 text-emerald-600', border: 'border-emerald-100' },

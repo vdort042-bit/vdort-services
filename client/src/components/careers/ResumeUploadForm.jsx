@@ -166,10 +166,10 @@ export default function ResumeUploadForm({
           onChange={(e) => handleFile(e.target.files?.[0])}
         />
         {resumeFile ? (
-          <div className="flex items-center justify-center gap-3">
-            <FileText className={`w-8 h-8 ${compact ? 'text-brand-500' : 'text-brand-400'}`} />
-            <div className="text-left">
-              <p className={`font-medium text-sm ${compact ? 'text-navy-900' : 'text-white'}`}>{resumeFile.name}</p>
+          <div className="flex items-center justify-center gap-3 min-w-0">
+            <FileText className={`w-8 h-8 shrink-0 ${compact ? 'text-brand-500' : 'text-brand-400'}`} />
+            <div className="text-left min-w-0 flex-1">
+              <p className={`font-medium text-sm truncate ${compact ? 'text-navy-900' : 'text-white'}`}>{resumeFile.name}</p>
               <p className={`text-xs ${compact ? 'text-slate-500' : 'text-surface-300'}`}>
                 {(resumeFile.size / 1024).toFixed(0)} KB — Click to change
               </p>

@@ -36,7 +36,7 @@ export default function AdminApplications() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 className="font-heading font-bold text-2xl text-navy-900">Resume Submissions</h2>
+          <h2 className="font-heading font-bold text-xl sm:text-2xl text-navy-900">Resume Submissions</h2>
           <p className="text-slate-500 text-sm">{apps.length} total resume{apps.length !== 1 ? 's' : ''} submitted</p>
         </div>
         <select value={filter} onChange={(e) => setFilter(e.target.value)}
@@ -53,14 +53,14 @@ export default function AdminApplications() {
           const atsLabel = app.atsLabel || getATSLabel(atsScore);
 
           return (
-            <div key={app.id} className="bg-white rounded-2xl border border-surface-200 p-6 shadow-card hover:shadow-card-hover transition-all">
+            <div key={app.id} className="bg-white rounded-2xl border border-surface-200 p-4 sm:p-6 shadow-card hover:shadow-card-hover transition-all">
               <div className="flex flex-col lg:flex-row lg:items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-brand-50 flex items-center justify-center text-brand-600 font-bold shrink-0">
                   {app.name[0]}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h3 className="font-heading font-semibold text-navy-900">{app.name}</h3>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-1">
+                    <h3 className="font-heading font-semibold text-navy-900 break-words">{app.name}</h3>
                     <span className={`text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1.5 ${badgeColor}`}>
                       <TrendingUp className="w-3.5 h-3.5" />
                       {atsScore}%
@@ -68,8 +68,8 @@ export default function AdminApplications() {
                   </div>
                   <p className="text-sm text-brand-500">{app.jobTitle}</p>
                   <p className="text-xs text-slate-500 mt-0.5 font-medium">{atsLabel}</p>
-                  <div className="flex flex-wrap gap-3 mt-2 text-xs text-slate-500">
-                    <span>{app.email}</span>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-xs text-slate-500">
+                    <span className="break-all">{app.email}</span>
                     {app.phone && <span>{app.phone}</span>}
                     {app.experience && <span>{app.experience} experience</span>}
                     {app.skills && <span>{app.skills}</span>}
@@ -86,9 +86,9 @@ export default function AdminApplications() {
                     </a>
                   )}
                 </div>
-                <div className="flex items-center gap-3 shrink-0">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full lg:w-auto">
                   <select value={app.status} onChange={(e) => updateStatus(app.id, e.target.value)}
-                    className="px-3 py-2 rounded-xl border border-surface-200 text-sm outline-none focus:border-brand-500">
+                    className="flex-1 sm:flex-none px-3 py-2 rounded-xl border border-surface-200 text-sm outline-none focus:border-brand-500">
                     {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                   <button onClick={() => handleDelete(app.id)} className="text-red-500 text-sm hover:underline cursor-pointer">Delete</button>

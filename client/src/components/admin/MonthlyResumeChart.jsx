@@ -190,13 +190,13 @@ export default function MonthlyResumeChart() {
               const count = data?.byStatus?.[status.key] || 0;
               const pct = data?.total ? Math.round((count / data.total) * 100) : 0;
               return (
-                <div key={status.key} className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 w-28 shrink-0">
+                <div key={status.key} className="flex items-center gap-2 sm:gap-3">
+                  <div className="flex items-center gap-2 w-24 sm:w-28 shrink-0">
                     <span
                       className="inline-block w-8 h-1 rounded-full"
                       style={{ backgroundColor: status.color }}
                     />
-                    <span className="text-sm text-navy-900 capitalize">{status.label}</span>
+                    <span className="text-xs sm:text-sm text-navy-900 capitalize">{status.label}</span>
                   </div>
                   <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
                     <div

@@ -11,7 +11,7 @@ export default function StudentDashboard() {
     || '';
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto w-full">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
@@ -31,7 +31,7 @@ export default function StudentDashboard() {
           Fill in your details and upload your resume. Our team will review and contact you within 24 hours.
         </p>
 
-        <div className="bg-white rounded-2xl border border-surface-200 shadow-card p-6 sm:p-8">
+        <div className="bg-white rounded-2xl border border-surface-200 shadow-card p-4 sm:p-6 md:p-8">
           <ResumeUploadForm
             compact
             userId={user?.uid}

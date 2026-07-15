@@ -157,7 +157,7 @@ export default function StudentNotificationBell() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-2xl border border-slate-200 shadow-xl z-50 overflow-hidden"
+            className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-sm sm:w-80 bg-white rounded-2xl border border-slate-200 shadow-xl z-50 overflow-hidden"
           >
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
               <h3 className="font-semibold text-navy-900 text-sm">Notifications</h3>

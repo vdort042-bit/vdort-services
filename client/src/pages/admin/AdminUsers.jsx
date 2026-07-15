@@ -91,7 +91,7 @@ export default function AdminUsers() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search candidates..."
-              className="pl-9 pr-4 py-2 rounded-xl border border-surface-300 focus:outline-none focus:border-brand-500 text-sm w-56"
+              className="pl-9 pr-4 py-2 rounded-xl border border-surface-300 focus:outline-none focus:border-brand-500 text-sm w-full sm:w-56"
             />
           </div>
         </div>
@@ -143,8 +143,8 @@ export default function AdminUsers() {
                   )}
                 </div>
                 <div className="flex items-center gap-3 text-xs text-surface-400 mt-0.5">
-                  <span className="flex items-center gap-1">
-                    <Mail className="w-3 h-3" />
+                  <span className="flex items-center gap-1 break-all">
+                    <Mail className="w-3 h-3 shrink-0" />
                     {student.email}
                   </span>
                   <span className="hidden sm:flex items-center gap-1">

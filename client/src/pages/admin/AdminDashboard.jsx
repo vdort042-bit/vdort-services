@@ -26,7 +26,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h2 className="font-heading font-bold text-2xl text-navy-900 mb-2">Dashboard</h2>
+        <h2 className="font-heading font-bold text-xl sm:text-2xl text-navy-900 mb-2">Dashboard</h2>
         <p className="text-slate-500">Welcome back! Here's your latest data overview.</p>
       </motion.div>
 

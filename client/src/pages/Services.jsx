@@ -58,14 +58,13 @@ export default function Services() {
             <ScrollReveal key={service.id}>
               <div
                 id={service.id}
-                className={`grid lg:grid-cols-2 gap-12 items-center ${i % 2 === 1 ? 'lg:direction-rtl' : ''}`}
-                style={i % 2 === 1 ? { direction: 'rtl' } : {}}
+                className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center"
               >
-                <div style={{ direction: 'ltr' }}>
+                <div className={i % 2 === 1 ? 'lg:order-2' : ''}>
                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center mb-6 shadow-lg shadow-brand-500/20">
                     <service.icon className="w-8 h-8 text-white" />
                   </div>
-                  <h2 className="font-heading font-bold text-3xl text-navy-900 mb-4">{service.title}</h2>
+                  <h2 className="font-heading font-bold text-2xl sm:text-3xl text-navy-900 mb-4">{service.title}</h2>
                   <p className="text-slate-600 text-lg leading-relaxed mb-6">{service.description}</p>
 
                   <h4 className="font-heading font-semibold text-navy-900 mb-3">Key Benefits</h4>
@@ -80,8 +79,8 @@ export default function Services() {
                 </div>
 
                 {/* Process Steps */}
-                <div style={{ direction: 'ltr' }}>
-                  <div className="bg-surface-50 rounded-2xl p-8 border border-surface-200">
+                <div className={i % 2 === 1 ? 'lg:order-1' : ''}>
+                  <div className="bg-surface-50 rounded-2xl p-5 sm:p-8 border border-surface-200">
                     <h4 className="font-heading font-semibold text-navy-900 mb-6">Our Process</h4>
                     <div className="space-y-4">
                       {service.process.map((step, stepIndex) => (

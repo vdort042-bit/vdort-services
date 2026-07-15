@@ -116,7 +116,7 @@ export default function Contact() {
 
       {/* FAQ */}
       <section className="section-padding bg-surface-50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-0">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <SectionHeading
             overline="FAQ"
             title="Frequently Asked Questions"
@@ -131,7 +131,7 @@ export default function Contact() {
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
                     className="w-full px-6 py-5 flex items-center justify-between text-left cursor-pointer hover:bg-surface-50 transition-colors"
                   >
-                    <span className="font-heading font-semibold text-navy-900 pr-4">{faq.q}</span>
+                    <span className="font-heading font-semibold text-navy-900 pr-4 break-words">{faq.q}</span>
                     <motion.div
                       animate={{ rotate: openFaq === i ? 180 : 0 }}
                       transition={{ duration: 0.2 }}

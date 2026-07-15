@@ -28,8 +28,8 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-72 bg-navy-950 border-r border-navy-800 transform transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex flex-col h-full">
-          <div className="p-6 border-b border-navy-800">
-            <Link to="/" className="flex items-center gap-3">
+          <div className="p-6 border-b border-navy-800 flex items-center justify-between">
+            <Link to="/" className="flex items-center gap-3 min-w-0">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-accent-400 flex items-center justify-center">
                 <span className="text-white font-heading font-bold text-lg">V</span>
               </div>
@@ -38,6 +38,14 @@ export default function AdminLayout() {
                 <span className="block text-[10px] text-brand-400 uppercase tracking-widest">Admin Panel</span>
               </div>
             </Link>
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden p-2 rounded-lg text-surface-300 hover:text-white hover:bg-white/10 cursor-pointer"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
@@ -98,20 +106,20 @@ export default function AdminLayout() {
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-surface-200 px-4 lg:px-8 py-4 flex items-center gap-4">
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-3 min-w-[44px] min-h-[44px] rounded-xl hover:bg-surface-100 cursor-pointer flex items-center justify-center" aria-label="Open menu">
+        <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-surface-200 px-3 sm:px-4 lg:px-8 py-3 sm:py-4 flex items-center gap-2 sm:gap-4 min-w-0">
+          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 min-w-[44px] min-h-[44px] rounded-xl hover:bg-surface-100 cursor-pointer flex items-center justify-center shrink-0" aria-label="Open menu">
             <Menu className="w-5 h-5 text-navy-900" />
           </button>
-          <div className="flex items-center gap-2 text-navy-900">
-            <BarChart3 className="w-5 h-5 text-brand-500" />
-            <h1 className="font-heading font-semibold text-lg">Admin Dashboard</h1>
+          <div className="flex items-center gap-2 text-navy-900 min-w-0 flex-1">
+            <BarChart3 className="w-5 h-5 text-brand-500 shrink-0" />
+            <h1 className="font-heading font-semibold text-base sm:text-lg truncate">Admin Dashboard</h1>
           </div>
-          <Link to="/" className="ml-auto text-sm text-brand-500 hover:text-brand-600 font-medium">
+          <Link to="/" className="hidden sm:inline text-sm text-brand-500 hover:text-brand-600 font-medium shrink-0 whitespace-nowrap">
             View Website →
           </Link>
         </header>
 
-        <main className="flex-1 p-4 lg:p-8 overflow-auto">
+        <main className="flex-1 p-3 sm:p-4 lg:p-8 overflow-auto">
           <Outlet />
         </main>
       </div>

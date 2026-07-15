@@ -26,7 +26,8 @@ export default function AdminSubscribers() {
       </div>
 
       <div className="bg-white rounded-2xl border border-surface-200 shadow-card overflow-hidden">
-        <table className="w-full text-sm">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm min-w-[480px]">
           <thead className="bg-surface-50 border-b border-surface-200">
             <tr>
               <th className="text-left px-6 py-4 font-semibold text-navy-900">Email</th>
@@ -48,6 +49,7 @@ export default function AdminSubscribers() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
