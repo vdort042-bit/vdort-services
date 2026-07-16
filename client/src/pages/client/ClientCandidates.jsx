@@ -8,6 +8,7 @@ import {
 import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase/firebase';
 import { useAuth } from '../../context/AuthContext';
+import { isDirectResumeUrl } from '../../utils/resumeUrl';
 
 // ── ATS Progress ──────────────────────────────────────────────────────────────
 function ATSProgressBar({ score }) {
@@ -261,7 +262,7 @@ export default function ClientCandidates() {
 
                   {/* Action bar */}
                   <div className="flex flex-wrap items-center gap-3 mt-4">
-                    {app.resumeUrl && (
+                    {isDirectResumeUrl(app.resumeUrl) && (
                       <a
                         href={app.resumeUrl}
                         target="_blank"

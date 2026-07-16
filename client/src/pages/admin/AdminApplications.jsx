@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import { Download, ExternalLink } from 'lucide-react';
 import api from '../../services/api';
 import Loader from '../../components/ui/Loader';
-import { getApiOrigin } from '../../config/apiConfig';
-import { downloadResume } from '../../utils/downloadResume';
-import { getResumeViewUrl, getResumeDownloadLabel } from '../../utils/resumeUrl';
+import { downloadResume, openResumeInBrowser } from '../../utils/downloadResume';
+import { getResumeViewUrl, getResumeDownloadLabel, isDirectResumeUrl } from '../../utils/resumeUrl';
 
 const statuses = ['new', 'reviewing', 'shortlisted', 'interviewed', 'hired', 'rejected'];
 
@@ -13,6 +12,7 @@ export default function AdminApplications() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
   const [downloadingId, setDownloadingId] = useState(null);
+  const [viewingId, setViewingId] = useState(null);
 
   const load = () => {
     api.applications.list().then((res) => setApps(res.data)).catch(console.error).finally(() => setLoading(false));
@@ -29,6 +29,21 @@ export default function AdminApplications() {
     if (!confirm('Delete this application?')) return;
     await api.applications.delete(id);
     load();
+  };
+
+  const handleView = async (app) => {
+    if (isDirectResumeUrl(app.resumeUrl)) {
+      window.open(getResumeViewUrl(app.resumeUrl), '_blank', 'noopener,noreferrer');
+      return;
+    }
+    setViewingId(app.id);
+    try {
+      await openResumeInBrowser(app.id);
+    } catch (err) {
+      alert(err.message || 'Failed to open resume');
+    } finally {
+      setViewingId(null);
+    }
   };
 
   const handleDownload = async (app) => {
@@ -81,14 +96,15 @@ export default function AdminApplications() {
                   {app.message && <p className="text-sm text-slate-600 mt-2 line-clamp-2">{app.message}</p>}
                   {app.resumeUrl && (
                     <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-2 sm:gap-3 mt-3">
-                      <a
-                        href={getResumeViewUrl(app.resumeUrl)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-sm text-brand-500 hover:text-brand-600 font-medium min-h-[44px]"
+                      <button
+                        type="button"
+                        onClick={() => handleView(app)}
+                        disabled={viewingId === app.id}
+                        className="inline-flex items-center gap-1.5 text-sm text-brand-500 hover:text-brand-600 font-medium min-h-[44px] cursor-pointer disabled:opacity-50"
                       >
-                        <ExternalLink className="w-4 h-4" /> View Resume
-                      </a>
+                        <ExternalLink className="w-4 h-4" />
+                        {viewingId === app.id ? 'Opening...' : 'View Resume'}
+                      </button>
                       <button
                         type="button"
                         onClick={() => handleDownload(app)}

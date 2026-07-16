@@ -7,11 +7,11 @@ function resolveApiBase() {
   const env = import.meta.env.VITE_API_URL?.trim();
 
   if (import.meta.env.PROD) {
-    // Direct Render URL — more reliable than Vercel /api proxy
-    if (!env || env.includes('localhost') || env.includes('127.0.0.1')) {
-      return RENDER_API;
+    // Always hit Render directly in production — Vercel /api proxy can break file uploads
+    if (env?.startsWith('http') && !env.includes('localhost') && !env.includes('127.0.0.1')) {
+      return env.replace(/\/$/, '');
     }
-    return env;
+    return RENDER_API;
   }
 
   // Prefer Vite proxy in dev unless a full http URL is explicitly set

@@ -58,6 +58,7 @@ router.get('/:id/resume/download', authenticate, authorize('admin', 'client'), a
     }
 
     const baseName = `${sanitizeDownloadName(app.name)}_Resume`;
+    const disposition = req.query.view === '1' ? 'inline' : 'attachment';
 
     if (app.resumeUrl.startsWith('http')) {
       const remoteRes = await fetch(app.resumeUrl);
@@ -67,19 +68,22 @@ router.get('/:id/resume/download', authenticate, authorize('admin', 'client'), a
       const ext = getResumeExtension(app.resumeUrl);
       const buffer = Buffer.from(await remoteRes.arrayBuffer());
       res.setHeader('Content-Type', MIME_BY_EXT[ext] || 'application/octet-stream');
-      res.setHeader('Content-Disposition', `attachment; filename="${baseName}${ext}"`);
+      res.setHeader('Content-Disposition', `${disposition}; filename="${baseName}${ext}"`);
       return res.send(buffer);
     }
 
     const filename = path.basename(app.resumeUrl);
     const filePath = path.join(uploadDir, filename);
     if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ success: false, message: 'Resume file not found on server' });
+      return res.status(404).json({
+        success: false,
+        message: 'Resume file not found — re-submit after Firebase Storage is configured on the server',
+      });
     }
 
     const ext = getResumeExtension(app.resumeUrl, filePath);
     res.setHeader('Content-Type', MIME_BY_EXT[ext] || 'application/octet-stream');
-    res.setHeader('Content-Disposition', `attachment; filename="${baseName}${ext}"`);
+    res.setHeader('Content-Disposition', `${disposition}; filename="${baseName}${ext}"`);
     return res.sendFile(filePath);
   } catch (err) {
     console.error('Resume download error:', err);
@@ -139,31 +143,35 @@ router.post('/', (req, res, next) => {
       expiresAt: getExpiresAt(),
     };
 
+    if (req.file && resumePath && fs.existsSync(resumePath)) {
+      try {
+        const uploadedUrl = await persistResume(resumePath, req.file.originalname);
+        application.resumeUrl = uploadedUrl;
+      } catch (uploadErr) {
+        console.error('Resume Firebase upload failed:', uploadErr.message);
+        try { if (fs.existsSync(resumePath)) fs.unlinkSync(resumePath); } catch { /* ignore */ }
+        return res.status(503).json({
+          success: false,
+          message: 'Resume upload to storage failed. Please try again in a moment.',
+        });
+      }
+    }
+
     await applications.create(application);
 
     if (job) {
       jobs.incrementApplications(jobId).catch(() => {});
     }
 
-    if (req.file && resumePath && fs.existsSync(resumePath)) {
-      try {
-        const uploadedUrl = await persistResume(resumePath, req.file.originalname);
-        await applications.updateResumeUrl(application.id, uploadedUrl);
-        application.resumeUrl = uploadedUrl;
-        sendResumeEmail(application, null, req.file.originalname, uploadedUrl);
-      } catch (uploadErr) {
-        console.error('Resume Firebase upload failed:', uploadErr.message);
-        sendResumeEmail(application, resumePath, req.file.originalname, null);
-      }
+    if (application.resumeUrl) {
+      sendResumeEmail(application, null, req.file?.originalname, application.resumeUrl);
     }
 
     res.status(201).json({
       success: true,
       data: application,
       ats: atsResult,
-      message: application.resumeUrl
-        ? 'Application submitted successfully'
-        : 'Application saved but resume upload failed — please try again or contact support',
+      message: 'Application submitted successfully',
     });
   } catch (err) {
     console.error('Application submit error:', err);

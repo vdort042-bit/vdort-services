@@ -4,7 +4,8 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { initFirebase } from './config/firebase.js';
+import { initFirebase, getFirebaseConfig } from './config/firebase.js';
+import { getStorage } from 'firebase-admin/storage';
 import { seedIfEmpty } from './store/firestoreStore.js';
 
 import authRoutes from './routes/auth.js';
@@ -50,8 +51,28 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-app.get('/api/health', (_req, res) => {
-  res.json({ success: true, message: 'VDORT API is running', timestamp: new Date().toISOString() });
+app.get('/api/health', async (_req, res) => {
+  const { storageBucket } = getFirebaseConfig();
+  let storage = { ok: false, bucket: storageBucket || null, message: 'Not checked' };
+
+  try {
+    initFirebase();
+    if (storageBucket) {
+      await getStorage().bucket(storageBucket).getMetadata();
+      storage = { ok: true, bucket: storageBucket, message: 'Firebase Storage reachable' };
+    } else {
+      storage.message = 'FIREBASE_STORAGE_BUCKET not set';
+    }
+  } catch (err) {
+    storage.message = err.message;
+  }
+
+  res.json({
+    success: true,
+    message: 'VDORT API is running',
+    timestamp: new Date().toISOString(),
+    storage,
+  });
 });
 
 app.use('/api/auth',         authRoutes);
@@ -72,6 +93,22 @@ async function start() {
     console.log('\n🔥 Connecting to Firebase Firestore...');
     initFirebase();
     console.log('✅ Firebase connected!');
+
+    if (process.env.NODE_ENV === 'production') {
+      const missing = ['FIREBASE_PRIVATE_KEY', 'FIREBASE_PROJECT_ID', 'FIREBASE_CLIENT_EMAIL', 'FIREBASE_STORAGE_BUCKET']
+        .filter((k) => !process.env[k]);
+      if (missing.length) {
+        console.warn(`⚠️  Missing env for resume uploads: ${missing.join(', ')}`);
+      } else {
+        try {
+          const bucketName = process.env.FIREBASE_STORAGE_BUCKET || `${process.env.FIREBASE_PROJECT_ID}.appspot.com`;
+          await getStorage().bucket(bucketName).getMetadata();
+          console.log(`📦 Firebase Storage bucket OK: ${bucketName}`);
+        } catch (storageErr) {
+          console.warn(`⚠️  Firebase Storage check failed: ${storageErr.message}`);
+        }
+      }
+    }
 
     console.log('📦 Checking seed data...');
     await seedIfEmpty();

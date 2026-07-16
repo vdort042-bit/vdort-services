@@ -1,9 +1,12 @@
-import { getApiOrigin } from '../config/apiConfig';
+/** True when resume can open directly in browser (Firebase Storage URL). */
+export function isDirectResumeUrl(resumeUrl) {
+  return !!resumeUrl && resumeUrl.startsWith('http');
+}
 
 export function getResumeViewUrl(resumeUrl) {
   if (!resumeUrl) return null;
-  if (resumeUrl.startsWith('http')) return resumeUrl;
-  return `${getApiOrigin()}${resumeUrl}`;
+  if (isDirectResumeUrl(resumeUrl)) return resumeUrl;
+  return null;
 }
 
 export function getResumeDownloadLabel(resumeUrl) {

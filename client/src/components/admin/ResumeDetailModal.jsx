@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Download, Mail, Phone, Briefcase, MessageSquare, ExternalLink } from 'lucide-react';
-import { downloadResume } from '../../utils/downloadResume';
-import { getResumeViewUrl, getResumeDownloadLabel } from '../../utils/resumeUrl';
+import { downloadResume, openResumeInBrowser } from '../../utils/downloadResume';
+import { getResumeViewUrl, getResumeDownloadLabel, isDirectResumeUrl } from '../../utils/resumeUrl';
 
 const statusColors = {
   new: 'bg-blue-50 text-blue-600',
@@ -15,6 +15,7 @@ const statusColors = {
 
 export default function ResumeDetailModal({ app, onClose, onStatusChange, statuses }) {
   const [downloading, setDownloading] = useState(false);
+  const [viewing, setViewing] = useState(false);
 
   if (!app) return null;
 
@@ -29,7 +30,20 @@ export default function ResumeDetailModal({ app, onClose, onStatusChange, status
     }
   };
 
-  const resumeHref = getResumeViewUrl(app.resumeUrl);
+  const handleView = async () => {
+    if (isDirectResumeUrl(app.resumeUrl)) {
+      window.open(getResumeViewUrl(app.resumeUrl), '_blank', 'noopener,noreferrer');
+      return;
+    }
+    setViewing(true);
+    try {
+      await openResumeInBrowser(app.id);
+    } catch (err) {
+      alert(err.message || 'Failed to open resume');
+    } finally {
+      setViewing(false);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -92,17 +106,17 @@ export default function ResumeDetailModal({ app, onClose, onStatusChange, status
               </div>
             )}
 
-            {resumeHref && (
+            {app.resumeUrl && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <a
-                  href={resumeHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-3 rounded-xl border border-brand-200 text-brand-600 font-semibold hover:bg-brand-50 transition-colors"
+                <button
+                  type="button"
+                  onClick={handleView}
+                  disabled={viewing}
+                  className="flex items-center justify-center gap-2 py-3 rounded-xl border border-brand-200 text-brand-600 font-semibold hover:bg-brand-50 transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  View Resume
-                </a>
+                  {viewing ? 'Opening...' : 'View Resume'}
+                </button>
                 <button
                   type="button"
                   onClick={handleDownload}

@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { v4 as uuid } from 'uuid';
 import { getStorage } from 'firebase-admin/storage';
-import { initFirebase } from '../config/firebase.js';
+import { initFirebase, getFirebaseConfig } from '../config/firebase.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadDir = path.join(__dirname, '../../uploads');
@@ -16,9 +16,8 @@ const MIME_BY_EXT = {
 
 function getBucket() {
   initFirebase();
-  const bucketName =
-    process.env.FIREBASE_STORAGE_BUCKET ||
-    `${process.env.FIREBASE_PROJECT_ID}.appspot.com`;
+  const { storageBucket, projectId } = getFirebaseConfig();
+  const bucketName = storageBucket || `${projectId}.appspot.com`;
   return getStorage().bucket(bucketName);
 }
 
