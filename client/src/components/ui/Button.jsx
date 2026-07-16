@@ -30,10 +30,10 @@ export default function Button({
   ...props
 }) {
   const classes = cn(
-    'inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-300 cursor-pointer select-none',
+    'inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition-all duration-150 cursor-pointer select-none active:scale-[0.98]',
     variants[variant],
     sizes[size],
-    disabled && 'opacity-50 cursor-not-allowed',
+    disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
     className
   );
 
@@ -43,7 +43,7 @@ export default function Button({
   return (
     <MotionTag
       className={classes}
-      whileHover={disabled ? {} : { scale: 1.02, y: -1 }}
+      whileHover={disabled ? {} : { scale: 1.01 }}
       whileTap={disabled ? {} : { scale: 0.98 }}
       {...linkProps}
       {...props}

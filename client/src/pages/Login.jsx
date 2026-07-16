@@ -63,18 +63,14 @@ export default function Login() {
         loginEmail,
         loginPassword
       );
+
+      // Navigate immediately — AuthContext updates in background
+      navigate('/student', { replace: true });
+
       const uid = userCredential.user.uid;
-
-      // Get user role from Firestore
       const userDoc = await getDoc(doc(db, 'users', uid));
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const role = userData.role;
-
-        if (role === 'admin') navigate('/admin', { replace: true });
-        else navigate('/student', { replace: true });
-      } else {
-        navigate('/student', { replace: true });
+      if (userDoc.exists() && userDoc.data().role === 'admin') {
+        navigate('/admin', { replace: true });
       }
     } catch (err) {
       console.error('Login error:', err);

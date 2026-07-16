@@ -118,13 +118,13 @@ function ApplyModal({ job, onClose, onSuccess }) {
       formData.append('resume', resumeFile);
 
       const result = await api.applications.submit(formData);
-      const ats = result.ats || {};
-      const saved = result.data || {};
-
-      if (!saved.resumeUrl) {
-        setError(result.message || 'Resume upload failed. Please try again.');
+      if (!result.success) {
+        setError(result.message || 'Submission failed. Please try again.');
         return;
       }
+
+      const ats = result.ats || {};
+      const saved = result.data || {};
 
       setAtsResult({
         score: ats.score ?? saved.atsScore ?? calculateATSScore({ ...form, resumeUrl: saved.resumeUrl }, job),
@@ -148,9 +148,10 @@ function ApplyModal({ job, onClose, onSuccess }) {
   return (
     <div className="fixed inset-0 bg-navy-950/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 40 }}
+        exit={{ opacity: 0, y: 16 }}
+        transition={{ duration: 0.15 }}
         className="bg-white w-full sm:rounded-3xl sm:max-w-2xl max-h-[95vh] flex flex-col shadow-2xl overflow-hidden"
       >
         {/* Header */}

@@ -36,16 +36,29 @@ const clientOrigins = (process.env.CLIENT_URL || '')
   .split(',')
   .map((o) => o.trim())
   .filter(Boolean);
-const allowedOrigins = [...new Set([...defaultOrigins, ...clientOrigins, ...extraOrigins])];
+const allowedOrigins = [...new Set([
+  ...defaultOrigins,
+  ...clientOrigins,
+  ...extraOrigins,
+  'https://vdort.us',
+  'https://www.vdort.us',
+  'https://vdort-services.vercel.app',
+])];
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+  if (allowedOrigins.includes(origin)) return true;
+  if (/^https:\/\/[\w-]+\.vercel\.app$/.test(origin)) return true;
+  if (/^https:\/\/(www\.)?vdort\.us$/.test(origin)) return true;
+  return false;
+}
 
 app.use(cors({
   origin(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    if (/^https:\/\/[\w-]+\.vercel\.app$/.test(origin)) return callback(null, true);
-    callback(null, false);
+    callback(null, isAllowedOrigin(origin));
   },
   credentials: true,
+  exposedHeaders: ['Content-Disposition'],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,4 +1,4 @@
-import { API_BASE } from '../config/apiConfig.js';
+import { getApiBases } from '../config/apiConfig.js';
 
 async function getFirebaseToken() {
   try {
@@ -32,10 +32,7 @@ async function request(endpoint, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const bases = [API_BASE];
-  if (import.meta.env.PROD && API_BASE.startsWith('http') && typeof window !== 'undefined') {
-    bases.push(`${window.location.origin}/api`);
-  }
+  const bases = getApiBases();
 
   let lastNetworkErr;
   for (const base of bases) {

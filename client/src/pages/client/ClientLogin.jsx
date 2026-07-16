@@ -35,7 +35,7 @@ export default function ClientLogin() {
         setError('Access denied. This portal is for client users only.');
         return;
       }
-      navigate('/client');
+      navigate('/client', { replace: true });
     } catch (err) {
       setError(err.message || 'Invalid credentials');
     } finally {

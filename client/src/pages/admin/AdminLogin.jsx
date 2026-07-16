@@ -37,7 +37,7 @@ export default function AdminLogin() {
         setError('Access denied. This portal is for admin users only.');
         return;
       }
-      navigate('/admin');
+      navigate('/admin', { replace: true });
     } catch (err) {
       setError(err.message || 'Invalid credentials');
     } finally {

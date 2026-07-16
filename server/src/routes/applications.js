@@ -24,12 +24,25 @@ function sanitizeDownloadName(name) {
   return (name || 'Candidate').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_') || 'Candidate';
 }
 
-/** Email after Firebase upload (attachment uses storage URL when local file is gone) */
-async function sendResumeEmail(application, resumePath, originalFileName, resumeUrl) {
+/** Save application first, upload resume in background — instant success for user */
+async function finalizeResumeUpload(applicationId, resumePath, originalFileName) {
+  if (!resumePath || !fs.existsSync(resumePath)) return;
   try {
-    await sendResumeNotification(application, resumePath, originalFileName, resumeUrl);
-  } catch (emailErr) {
-    console.warn('Resume email failed:', emailErr.message);
+    const uploadedUrl = await persistResume(resumePath, originalFileName);
+    await applications.updateResumeUrl(applicationId, uploadedUrl);
+    const app = await applications.get(applicationId);
+    try {
+      await sendResumeNotification(app, null, originalFileName, uploadedUrl);
+    } catch (emailErr) {
+      console.warn('Resume email failed:', emailErr.message);
+    }
+  } catch (uploadErr) {
+    console.error('Background resume upload failed:', uploadErr.message);
+    if (fs.existsSync(resumePath)) {
+      try {
+        await sendResumeNotification({ id: applicationId }, resumePath, originalFileName, null);
+      } catch { /* ignore */ }
+    }
   }
 }
 
@@ -143,28 +156,14 @@ router.post('/', (req, res, next) => {
       expiresAt: getExpiresAt(),
     };
 
-    if (req.file && resumePath && fs.existsSync(resumePath)) {
-      try {
-        const uploadedUrl = await persistResume(resumePath, req.file.originalname);
-        application.resumeUrl = uploadedUrl;
-      } catch (uploadErr) {
-        console.error('Resume Firebase upload failed:', uploadErr.message);
-        try { if (fs.existsSync(resumePath)) fs.unlinkSync(resumePath); } catch { /* ignore */ }
-        return res.status(503).json({
-          success: false,
-          message: 'Resume upload to storage failed. Please try again in a moment.',
-        });
-      }
-    }
-
     await applications.create(application);
 
     if (job) {
       jobs.incrementApplications(jobId).catch(() => {});
     }
 
-    if (application.resumeUrl) {
-      sendResumeEmail(application, null, req.file?.originalname, application.resumeUrl);
+    if (req.file && resumePath && fs.existsSync(resumePath)) {
+      finalizeResumeUpload(application.id, resumePath, req.file.originalname);
     }
 
     res.status(201).json({

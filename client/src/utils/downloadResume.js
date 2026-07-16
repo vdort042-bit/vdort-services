@@ -1,4 +1,4 @@
-import { API_BASE } from '../config/apiConfig';
+import { getApiBases } from '../config/apiConfig';
 
 async function getAuthToken() {
   const jwt = localStorage.getItem('vdort_token');
@@ -40,29 +40,41 @@ export async function openResumeInBrowser(applicationId) {
 
 async function fetchResumeBlob(applicationId, mode) {
   const token = await getAuthToken();
-  const res = await fetch(
-    `${API_BASE}/applications/${applicationId}/resume/download${mode === 'inline' ? '?view=1' : ''}`,
-    { headers: token ? { Authorization: `Bearer ${token}` } : {} },
-  );
+  const suffix = mode === 'inline' ? '?view=1' : '';
+  const path = `/applications/${applicationId}/resume/download${suffix}`;
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.message || 'Failed to load resume');
+  let lastNetworkErr;
+  for (const base of getApiBases()) {
+    let res;
+    try {
+      res = await fetch(`${base}${path}`, { headers });
+    } catch (networkErr) {
+      lastNetworkErr = networkErr;
+      continue;
+    }
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.message || 'Failed to load resume');
+    }
+
+    const blob = await res.blob();
+    const filename = parseFilename(res.headers.get('content-disposition')) || 'resume.pdf';
+
+    if (mode === 'attachment') {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    return { blob, filename };
   }
 
-  const blob = await res.blob();
-  const filename = parseFilename(res.headers.get('content-disposition')) || 'resume.pdf';
-
-  if (mode === 'attachment') {
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  return { blob, filename };
+  throw new Error(lastNetworkErr?.message || 'Failed to fetch resume — check your connection');
 }

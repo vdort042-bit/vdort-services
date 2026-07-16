@@ -12,9 +12,9 @@ services:
       - key: PORT
         value: 10000
       - key: CLIENT_URL
-        value: https://vdort-services.vercel.app
+        value: https://vdort-services.vercel.app,https://vdort.us,https://www.vdort.us
       - key: ALLOWED_ORIGINS
-        value: https://vdort-services.vercel.app
+        value: https://vdort-services.vercel.app,https://vdort.us,https://www.vdort.us
       - key: FIREBASE_PROJECT_ID
         value: vdort-28207
       - key: FIREBASE_CLIENT_EMAIL
@@ -29,9 +29,9 @@ services:
         value: vdort042@gmail.com
       - key: ADMIN_EMAIL
         value: vdort042@gmail.com
-      # Set these manually in Render Dashboard → Environment (secrets):
       - key: JWT_SECRET
-        sync: false
+        value: vdort-prod-jwt-2026-vdort-us-secure
+      # Paste FIREBASE_PRIVATE_KEY + SMTP_PASS in Render Dashboard (see render-env-paste.txt)
       - key: FIREBASE_PRIVATE_KEY
         sync: false
       - key: SMTP_PASS
