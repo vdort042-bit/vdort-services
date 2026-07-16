@@ -44,13 +44,16 @@ export async function uploadResumeToStorage(localPath, originalName) {
   return buildFirebaseDownloadUrl(bucket.name, dest, downloadToken);
 }
 
-/** Upload to Firebase Storage; fall back to local /uploads path in dev if upload fails. */
+/** Upload to Firebase Storage; fall back to local /uploads only in development. */
 export async function persistResume(localPath, originalName) {
   try {
     const url = await uploadResumeToStorage(localPath, originalName);
     try { fs.unlinkSync(localPath); } catch { /* keep local copy if delete fails */ }
     return url;
   } catch (err) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(`Firebase Storage upload failed: ${err.message}`);
+    }
     console.warn('Firebase Storage upload failed, using local path:', err.message);
     return `/uploads/${path.basename(localPath)}`;
   }

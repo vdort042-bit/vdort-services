@@ -85,7 +85,12 @@ export default function ResumeUploadForm({
       formData.append('message', form.message);
       formData.append('resume', resumeFile);
 
-      await api.applications.submit(formData);
+      const result = await api.applications.submit(formData);
+      if (!result.data?.resumeUrl) {
+        setError(result.message || 'Resume upload failed. Please try again.');
+        setSubmitting(false);
+        return;
+      }
       setSubmitted(true);
       setSubmitting(false);
       onSuccess?.();

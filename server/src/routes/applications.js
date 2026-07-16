@@ -24,23 +24,12 @@ function sanitizeDownloadName(name) {
   return (name || 'Candidate').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_') || 'Candidate';
 }
 
-/** Email + Firebase upload after response — keeps submit fast for users */
-async function finalizeResumeSubmission(application, resumePath, originalFileName) {
-  if (!resumePath || !fs.existsSync(resumePath)) return;
-
+/** Email after Firebase upload (attachment uses storage URL when local file is gone) */
+async function sendResumeEmail(application, resumePath, originalFileName, resumeUrl) {
   try {
-    await sendResumeNotification(application, resumePath, originalFileName);
+    await sendResumeNotification(application, resumePath, originalFileName, resumeUrl);
   } catch (emailErr) {
     console.warn('Resume email failed:', emailErr.message);
-  }
-
-  try {
-    if (fs.existsSync(resumePath)) {
-      const resumeUrl = await persistResume(resumePath, originalFileName);
-      await applications.updateResumeUrl(application.id, resumeUrl);
-    }
-  } catch (uploadErr) {
-    console.warn('Resume storage upload failed:', uploadErr.message);
   }
 }
 
@@ -156,16 +145,26 @@ router.post('/', (req, res, next) => {
       jobs.incrementApplications(jobId).catch(() => {});
     }
 
+    if (req.file && resumePath && fs.existsSync(resumePath)) {
+      try {
+        const uploadedUrl = await persistResume(resumePath, req.file.originalname);
+        await applications.updateResumeUrl(application.id, uploadedUrl);
+        application.resumeUrl = uploadedUrl;
+        sendResumeEmail(application, null, req.file.originalname, uploadedUrl);
+      } catch (uploadErr) {
+        console.error('Resume Firebase upload failed:', uploadErr.message);
+        sendResumeEmail(application, resumePath, req.file.originalname, null);
+      }
+    }
+
     res.status(201).json({
       success: true,
       data: application,
       ats: atsResult,
-      message: 'Application submitted successfully',
+      message: application.resumeUrl
+        ? 'Application submitted successfully'
+        : 'Application saved but resume upload failed — please try again or contact support',
     });
-
-    if (req.file && resumePath) {
-      finalizeResumeSubmission(application, resumePath, req.file.originalname);
-    }
   } catch (err) {
     console.error('Application submit error:', err);
     res.status(500).json({ success: false, message: err.message || 'Failed to submit application' });

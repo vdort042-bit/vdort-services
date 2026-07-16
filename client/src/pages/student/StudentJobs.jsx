@@ -5,11 +5,11 @@ import {
   FileText, Star, AlertCircle, ChevronRight,
   DollarSign, Building2, Zap,
 } from 'lucide-react';
-import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../firebase/firebase';
+import { collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase/firebase';
 import { useAuth } from '../../context/AuthContext';
 import { calculateATSScore, getATSLabel } from '../../utils/atsScore';
+import api from '../../services/api';
 
 // ── ATS Score Visual ──────────────────────────────────────────────────────────
 function ATSScoreRing({ score }) {
@@ -107,51 +107,32 @@ function ApplyModal({ job, onClose, onSuccess }) {
     setError('');
 
     try {
-      // 1. Try to upload resume to Firebase Storage (with 20s timeout)
-      let resumeUrl = null;
-      const resumeName = resumeFile.name;
-      try {
-        const ext = resumeFile.name.split('.').pop();
-        const storageRef = ref(storage, `resumes/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`);
+      const formData = new FormData();
+      formData.append('jobId', job.id);
+      if (user?.uid || user?.id) formData.append('userId', user?.uid || user?.id);
+      formData.append('name', form.name);
+      formData.append('email', form.email);
+      formData.append('phone', form.phone || '');
+      formData.append('experience', form.experience || '');
+      formData.append('message', form.message || '');
+      formData.append('resume', resumeFile);
 
-        const snapshot = await Promise.race([
-          uploadBytes(storageRef, resumeFile),
-          new Promise((_, reject) => setTimeout(() => reject(new Error('Upload timeout — saving without resume link')), 20000)),
-        ]);
-        resumeUrl = await getDownloadURL(snapshot.ref);
-      } catch (storageErr) {
-        console.warn('Storage upload failed:', storageErr.message);
-        // Non-fatal — application still saved, resume URL will be null
+      const result = await api.applications.submit(formData);
+      const ats = result.ats || {};
+      const saved = result.data || {};
+
+      if (!saved.resumeUrl) {
+        setError(result.message || 'Resume upload failed. Please try again.');
+        return;
       }
 
-      // 2. Compute ATS score client-side (pass job for accurate matching)
-      const appData = { ...form, resumeUrl };
-      const atsScore = calculateATSScore(appData, job);
-      const atsLabel = getATSLabel(atsScore);
-
-      // 3. Save application to Firestore
-      const application = {
-        jobId: job.id,
-        jobTitle: job.title || '',
-        company: job.company || 'VDORT',
-        clientId: job.clientId || null,
-        userId: user?.uid || user?.id || null,
-        name: form.name,
-        email: form.email,
-        phone: form.phone || '',
-        experience: form.experience || '',
-        message: form.message || '',
-        resumeUrl,
-        resumeName,
-        status: 'new',
-        atsScore,
-        atsLabel,
-        matchedSkills: [],
-        createdAt: serverTimestamp(),
-      };
-      await addDoc(collection(db, 'applications'), application);
-
-      setAtsResult({ score: atsScore, label: atsLabel, breakdown: null, matchedSkills: [], resumeUploaded: !!resumeUrl });
+      setAtsResult({
+        score: ats.score ?? saved.atsScore ?? calculateATSScore({ ...form, resumeUrl: saved.resumeUrl }, job),
+        label: ats.label ?? saved.atsLabel ?? getATSLabel(ats.score ?? saved.atsScore ?? 0),
+        breakdown: ats.breakdown ?? saved.atsBreakdown ?? null,
+        matchedSkills: ats.matchedSkills ?? saved.matchedSkills ?? [],
+        resumeUploaded: true,
+      });
       setStep('result');
       onSuccess?.();
     } catch (err) {
