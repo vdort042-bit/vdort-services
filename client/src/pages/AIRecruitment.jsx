@@ -56,10 +56,10 @@ export default function AIRecruitment() {
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[65vh] flex items-center gradient-hero overflow-hidden">
+      <section className="relative min-h-[55vh] sm:min-h-[65vh] flex items-center gradient-hero overflow-hidden pt-16">
         <ParticleBackground />
         <div className="absolute inset-0 bg-gradient-to-b from-navy-950/40 via-transparent to-navy-950/80" />
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <motion.div

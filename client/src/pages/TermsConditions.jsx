@@ -58,7 +58,7 @@ export default function TermsConditions() {
             <p>{COMPANY.fullName} shall not be liable for any indirect, incidental, or consequential damages arising from the use of our services. Our total liability shall not exceed the fees paid for the specific service in question.</p>
 
             <h2 className="font-heading text-navy-900">8. Governing Law</h2>
-            <p>These Terms shall be governed by and construed in accordance with the laws of India. Any disputes shall be subject to the exclusive jurisdiction of courts in Bangalore, Karnataka.</p>
+            <p>These Terms shall be governed by and construed in accordance with the laws of India. Any disputes shall be subject to the exclusive jurisdiction of courts in Dehradun, Uttarakhand.</p>
 
             <h2 className="font-heading text-navy-900">9. Contact</h2>
             <p>For questions regarding these Terms, contact us at <a href={`mailto:${COMPANY.email}`} className="text-brand-500">{COMPANY.email}</a>.</p>

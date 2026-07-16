@@ -157,6 +157,11 @@ export const applications = {
     return toDoc(await getDb().collection('applications').doc(id).get());
   },
 
+  updateResumeUrl: async (id, resumeUrl) => {
+    await getDb().collection('applications').doc(id).update({ resumeUrl });
+    return toDoc(await getDb().collection('applications').doc(id).get());
+  },
+
   delete: async (id) => {
     await getDb().collection('applications').doc(id).delete();
     return true;

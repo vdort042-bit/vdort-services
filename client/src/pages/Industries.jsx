@@ -24,10 +24,10 @@ export default function Industries() {
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[55vh] flex items-center gradient-hero overflow-hidden">
+      <section className="relative min-h-[50vh] sm:min-h-[55vh] flex items-center gradient-hero overflow-hidden pt-16">
         <ParticleBackground />
         <div className="absolute inset-0 bg-gradient-to-b from-navy-950/40 via-transparent to-navy-950/80" />
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-32 text-center">
           <motion.h1
             className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-white mb-6"
             initial={{ opacity: 0, y: 30 }}
@@ -98,21 +98,21 @@ export default function Industries() {
       <AnimatePresence>
         {selected && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-navy-950/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelected(null)}
           >
             <motion.div
-              className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-elevated p-8"
+              className="bg-white rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto shadow-elevated p-5 sm:p-8"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex items-center gap-4">
+              <div className="flex items-start justify-between gap-3 mb-6">
+                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                   <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${selected.color} flex items-center justify-center shadow-lg`}>
                     <selected.icon className="w-7 h-7 text-white" />
                   </div>
@@ -149,7 +149,7 @@ export default function Industries() {
                   </div>
                 </div>
 
-                <div className="pt-4 flex gap-3">
+                <div className="pt-4 flex flex-col sm:flex-row gap-3">
                   <Link to="/contact" onClick={() => setSelected(null)}>
                     <Button variant="primary" iconRight={ArrowRight}>Hire Talent</Button>
                   </Link>

@@ -236,7 +236,7 @@ export default function Login() {
   const leftContent = isForgot
     ? { heading: 'Reset Your Password', sub: 'Enter your registered email and we\'ll send you a reset link right away.', features: ['Quick & secure reset link', 'Check your spam folder too', 'Contact support if needed'] }
     : isSignUp
-    ? { heading: 'Create Your Account', sub: 'Register to submit your resume and connect with VDORT recruitment team.', features: ['Upload resume in one step', 'Free registration', 'Team contacts you within 24 hours'] }
+    ? { heading: 'Create Your Account', sub: 'Register to submit your resume and connect with VDORT recruitment team.', features: ['Upload resume in one step', 'Quick registration', 'Team contacts you within 24 hours'] }
     : { heading: 'Welcome back.', sub: 'Sign in to submit your resume and connect with VDORT.', features: ['Submit your resume', 'Quick & easy form', 'Team reviews within 24 hours'] };
 
   return (
@@ -552,7 +552,7 @@ export default function Login() {
 
               <form onSubmit={handleSignUp} className="space-y-3.5">
                 {/* Name Row: First / Middle / Last */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-300" />
                     <input

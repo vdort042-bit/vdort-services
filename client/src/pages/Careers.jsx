@@ -38,14 +38,14 @@ const services = [
   {
     icon: Rocket,
     title: 'Job Placement',
-    desc: 'We connect you directly with hiring managers at leading IT companies across the US and India.',
+    desc: 'We connect you directly with hiring managers at leading IT companies across the United States.',
     color: 'from-amber-500 to-yellow-500',
   },
 ];
 
 const steps = [
   { num: '01', title: 'Submit Your Resume', desc: 'Upload your resume and fill in your profile details. Takes less than 2 minutes.' },
-  { num: '02', title: 'Screening & Counselling', desc: 'Our team reviews your profile and schedules a consultation to understand your goals.' },
+  { num: '02', title: 'Profile Screening', desc: 'Our team reviews your profile and connects with you to understand your career goals.' },
   { num: '03', title: 'Resume Building', desc: 'We optimize your resume to be ATS-ready and tailored for your target roles.' },
   { num: '04', title: 'Technical Training', desc: 'Domain-specific preparation sessions to ensure you\'re interview-ready.' },
   { num: '05', title: 'Profile Marketing', desc: 'We actively market your profile to relevant recruiters and hiring managers.' },
@@ -55,7 +55,7 @@ const steps = [
 ];
 
 const candidates = [
-  { icon: '🎓', title: 'Recent Graduates', desc: 'Freshers looking to break into IT with their first US/India job.' },
+  { icon: '🎓', title: 'Recent Graduates', desc: 'Freshers looking to break into IT with their first US job.' },
   { icon: '🚀', title: 'Better Opportunity Seekers', desc: 'Professionals looking to upgrade to better roles and higher pay.' },
   { icon: '🔄', title: 'Career Changers', desc: 'Transitioning from one domain to another with our bridge programs.' },
 ];
@@ -63,8 +63,8 @@ const candidates = [
 const stats = [
   { value: '2,400+', label: 'Placements Done' },
   { value: '98%', label: 'Candidate Satisfaction' },
-  { value: '11 Days', label: 'Avg. Time-to-Place' },
-  { value: '25+', label: 'Countries Served' },
+  { value: '69 Days', label: 'Avg. Time-to-Place' },
+  { value: 'US Only', label: 'Market Served' },
 ];
 
 export default function Careers() {
@@ -84,7 +84,7 @@ export default function Careers() {
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
           >
             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-white text-xs sm:text-sm font-semibold">#1 IT Staffing Partner — India &amp; US</span>
+            <span className="text-white text-xs sm:text-sm font-semibold">#1 IT Staffing Partner — United States</span>
           </motion.div>
 
           <motion.h1
@@ -99,7 +99,7 @@ export default function Careers() {
             className="text-base sm:text-lg text-indigo-100 max-w-2xl mx-auto"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
           >
-            Login and submit your resume — our team will match you with the best IT opportunities across the US and India.
+            Login and submit your resume — our team will match you with the best IT opportunities in the United States.
           </motion.p>
         </div>
 
@@ -130,7 +130,7 @@ export default function Careers() {
             title="VDORT is For You If..."
             subtitle="We work with candidates at all stages of their IT career journey."
           />
-          <div className="mt-12 grid sm:grid-cols-3 gap-6">
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {candidates.map((c, i) => (
               <ScrollReveal key={c.title} delay={i * 0.1}>
                 <div className="bg-white rounded-2xl border border-surface-200 shadow-card p-6 text-center hover:shadow-card-hover transition-all">

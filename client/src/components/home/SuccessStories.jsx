@@ -10,7 +10,7 @@ const stories = [
     role: 'Cloud Solutions Architect',
     placedAt: 'Fortune 100 Tech Company',
     location: 'Bengaluru → Seattle, USA',
-    timeToPlace: '11 days',
+    timeToPlace: '69 days',
     salaryJump: '+68%',
     beforeRole: 'IT Support Engineer',
     afterRole: 'Cloud Architect',
@@ -67,7 +67,7 @@ const stories = [
 ];
 
 const stats = [
-  { label: 'Avg. Time-to-Place', value: '11 Days', icon: Clock },
+  { label: 'Avg. Time-to-Place', value: '69 Days', icon: Clock },
   { label: 'Avg. Salary Increase', value: '68%', icon: TrendingUp },
   { label: 'Candidate Satisfaction', value: '98%', icon: Star },
   { label: 'Global Placements', value: '2,400+', icon: Award },

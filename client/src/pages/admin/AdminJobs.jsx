@@ -59,7 +59,36 @@ export default function AdminJobs() {
         <Button variant="primary" size="md" icon={Plus} onClick={openCreate} className="w-full sm:w-auto">Add Job</Button>
       </div>
 
-      <div className="bg-white rounded-2xl border border-surface-200 shadow-card overflow-hidden">
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {jobs.map((job) => (
+          <div key={job.id} className="bg-white rounded-2xl border border-surface-200 p-4 shadow-card">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-navy-900 truncate">{job.title}</p>
+                <p className="text-xs text-slate-500 truncate">{job.company}</p>
+                <p className="text-xs text-slate-500 mt-1">{job.location} · {job.type}</p>
+                <p className="text-xs text-slate-500 mt-1">{job.applicationsCount} applications</p>
+              </div>
+              <span className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${
+                job.status === 'active' ? 'bg-green-50 text-green-600' : 'bg-slate-100 text-slate-600'
+              }`}>{job.status}</span>
+            </div>
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-surface-100">
+              <button onClick={() => openEdit(job)} className="flex-1 py-2.5 text-sm text-brand-500 bg-brand-50 rounded-lg cursor-pointer">Edit</button>
+              <button onClick={() => handleDelete(job.id)} className="flex-1 py-2.5 text-sm text-red-500 bg-red-50 rounded-lg cursor-pointer">Delete</button>
+            </div>
+          </div>
+        ))}
+        {jobs.length === 0 && (
+          <div className="text-center py-12 bg-white rounded-2xl border border-surface-200">
+            <Briefcase className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+            <p className="text-slate-500 text-sm">No jobs yet</p>
+          </div>
+        )}
+      </div>
+
+      <div className="hidden md:block bg-white rounded-2xl border border-surface-200 shadow-card overflow-hidden">
         <div className="overflow-x-auto -mx-px">
           <table className="w-full min-w-[720px] text-sm">
             <thead className="bg-surface-50 border-b border-surface-200">

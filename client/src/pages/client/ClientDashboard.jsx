@@ -62,13 +62,13 @@ export default function ClientDashboard() {
   return (
     <div className="space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <h2 className="font-heading font-bold text-2xl text-navy-900 mb-1">
+        <h2 className="font-heading font-bold text-xl sm:text-2xl text-navy-900 mb-1">
           Welcome, {user?.firstName || user?.name?.split(' ')[0] || 'Client'} 👋
         </h2>
         <p className="text-slate-500">Manage your hiring pipeline</p>
       </motion.div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {statCards.map((stat, i) => (
           <motion.div
             key={stat.label}
@@ -168,9 +168,9 @@ export default function ClientDashboard() {
             <span className="text-sm text-slate-500">Name:</span>
             <span className="text-sm font-medium text-navy-900">{user?.name || '-'}</span>
           </div>
-          <div className="flex items-center gap-3 p-3 bg-surface-50 rounded-xl">
-            <span className="text-sm text-slate-500">Email:</span>
-            <span className="text-sm font-medium text-navy-900">{user?.email || '-'}</span>
+          <div className="flex items-center gap-3 p-3 bg-surface-50 rounded-xl min-w-0">
+            <span className="text-sm text-slate-500 shrink-0">Email:</span>
+            <span className="text-sm font-medium text-navy-900 truncate">{user?.email || '-'}</span>
           </div>
           <div className="flex items-center gap-3 p-3 bg-surface-50 rounded-xl">
             <span className="text-sm text-slate-500">Phone:</span>

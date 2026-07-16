@@ -13,7 +13,7 @@ const reasons = [
   {
     icon: Globe,
     title: 'Global Talent Network',
-    description: 'Access a vetted network of 50,000+ professionals across 25+ countries, spanning every technology domain.',
+    description: 'Access a vetted network of 50,000+ professionals in the United States, spanning every technology domain.',
     gradient: 'from-blue-500 to-cyan-500',
   },
   {

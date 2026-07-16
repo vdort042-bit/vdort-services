@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-export default function StatCard({ icon: Icon, label, value, change, color = 'brand', onClick }) {
+export default function StatCard({ icon: Icon, label, value, color = 'brand', onClick }) {
   const colors = {
     brand: 'from-brand-500 to-brand-600',
     accent: 'from-accent-500 to-cyan-500',
@@ -17,11 +17,6 @@ export default function StatCard({ icon: Icon, label, value, change, color = 'br
         <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors[color]} flex items-center justify-center shadow-lg`}>
           <Icon className="w-6 h-6 text-white" />
         </div>
-        {change && (
-          <span className={`text-xs font-semibold px-2 py-1 rounded-full ${change > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-            {change > 0 ? '+' : ''}{change}%
-          </span>
-        )}
       </div>
       <p className="text-3xl font-heading font-bold text-navy-900 mb-1">{value ?? '—'}</p>
       <p className="text-sm text-slate-500">{label}</p>

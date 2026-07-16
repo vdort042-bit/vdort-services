@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MapPin, Clock, Briefcase, Search, X, Upload, CheckCircle,
-  FileText, TrendingUp, Star, AlertCircle, ChevronRight,
+  FileText, Star, AlertCircle, ChevronRight,
   DollarSign, Building2, Zap,
 } from 'lucide-react';
 import { collection, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -539,12 +539,6 @@ export default function StudentJobs() {
                           <>Apply Now <ChevronRight className="w-4 h-4" /></>
                         )}
                       </button>
-                      {!applied && (
-                        <span className="flex items-center gap-1 text-xs text-surface-400">
-                          <TrendingUp className="w-3.5 h-3.5 text-brand-400" />
-                          Get instant ATS score
-                        </span>
-                      )}
                     </div>
                   </div>
                 </div>

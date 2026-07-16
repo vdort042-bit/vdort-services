@@ -52,10 +52,10 @@ export default function About() {
                 />
                 <div className="space-y-4 text-slate-600 leading-relaxed">
                   <p>
-                    Founded in 2018 by Vikram Desai, VDORT Services was born from a simple yet powerful observation: the recruitment industry was ripe for a technology revolution. Traditional staffing approaches were slow, imprecise, and failed to serve the rapidly evolving needs of modern enterprises.
+                    Many years ago, Vikram Desai founded VDORT Services from a simple yet powerful observation: the recruitment industry was ripe for a technology revolution. Traditional staffing approaches were slow, imprecise, and failed to serve the rapidly evolving needs of modern enterprises.
                   </p>
                   <p>
-                    Starting with a small team of passionate recruiters in Bangalore, we set out to build something different — a recruitment company that combines the warmth of human connection with the precision of artificial intelligence. Today, VDORT serves 500+ clients across 25+ countries with a team of 200+ specialized recruiters.
+                    Starting with a small team of passionate recruiters, we set out to build something different — a recruitment company that combines the warmth of human connection with the precision of artificial intelligence. Today, VDORT serves 500+ clients across the United States with a team of 200+ specialized recruiters.
                   </p>
                   <p>
                     Our proprietary AI platform processes over 100,000 resumes monthly, achieving a 95% candidate-to-role match accuracy that's setting new industry benchmarks. But technology is only half the story — our success is built on relationships, trust, and an unwavering commitment to creating value for every stakeholder.
@@ -72,14 +72,16 @@ export default function About() {
                 <div className="space-y-1">
                   {milestones.slice(0, 5).map((milestone, i) => (
                     <motion.div
-                      key={milestone.year}
+                      key={milestone.id}
                       className="flex gap-4 p-3 rounded-xl hover:bg-white/5 transition-colors"
                       initial={{ opacity: 0, x: 20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.1 }}
                     >
-                      <span className="text-brand-400 font-heading font-bold text-lg shrink-0 w-12">{milestone.year}</span>
+                      <span className="text-brand-400 font-heading font-bold text-sm shrink-0 w-12 leading-snug">
+                        {milestone.era || String(i + 1).padStart(2, '0')}
+                      </span>
                       <div>
                         <p className="text-white font-semibold text-sm">{milestone.title}</p>
                         <p className="text-surface-300 text-xs mt-0.5">{milestone.description}</p>
@@ -219,9 +221,9 @@ export default function About() {
       <section className="section-padding bg-surface-50">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
-            overline="Global Reach"
+            overline="Our Growth"
             title="Our Growth Journey"
-            subtitle="From a startup in Bangalore to a global recruitment powerhouse."
+            subtitle="Years of growth building a trusted US recruitment partner."
           />
 
           <div className="relative">
@@ -229,15 +231,17 @@ export default function About() {
             <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-brand-500 via-accent-400 to-brand-500 md:-translate-x-px" />
 
             {milestones.map((milestone, i) => (
-              <ScrollReveal key={milestone.year} delay={i * 0.05}>
+              <ScrollReveal key={milestone.id} delay={i * 0.05}>
                 <div className={`relative flex items-center gap-8 mb-12 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
                   {/* Dot */}
                   <div className="absolute left-4 md:left-1/2 w-4 h-4 rounded-full bg-brand-500 border-4 border-white shadow-lg -translate-x-1/2 z-10" />
 
                   {/* Content */}
                   <div className={`ml-12 md:ml-0 md:w-1/2 ${i % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
-                    <span className="text-brand-500 font-heading font-bold text-2xl">{milestone.year}</span>
-                    <h3 className="font-heading font-bold text-lg text-navy-900 mt-1">{milestone.title}</h3>
+                    {milestone.era && (
+                      <span className="text-brand-500 font-heading font-bold text-lg">{milestone.era}</span>
+                    )}
+                    <h3 className={`font-heading font-bold text-lg text-navy-900 ${milestone.era ? 'mt-1' : ''}`}>{milestone.title}</h3>
                     <p className="text-slate-500 text-sm mt-2">{milestone.description}</p>
                   </div>
 

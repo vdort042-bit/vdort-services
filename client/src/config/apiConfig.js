@@ -1,20 +1,22 @@
-/** Production API on Render — proxied via Vercel rewrites as /api */
-const PROD_API = '/api';
-const DEV_API = 'http://localhost:5000/api';
+/** Production API on Render */
 const RENDER_API = 'https://vdort-services.onrender.com/api';
+/** Dev: Vite proxy — works with localhost, 127.0.0.1, and LAN IP */
+const DEV_API = '/api';
 
 function resolveApiBase() {
   const env = import.meta.env.VITE_API_URL?.trim();
 
-  // Production build must never call localhost (common deploy mistake)
   if (import.meta.env.PROD) {
+    // Direct Render URL — more reliable than Vercel /api proxy
     if (!env || env.includes('localhost') || env.includes('127.0.0.1')) {
-      return PROD_API;
+      return RENDER_API;
     }
     return env;
   }
 
-  return env || DEV_API;
+  // Prefer Vite proxy in dev unless a full http URL is explicitly set
+  if (!env || env === '/api') return DEV_API;
+  return env;
 }
 
 export const API_BASE = resolveApiBase();

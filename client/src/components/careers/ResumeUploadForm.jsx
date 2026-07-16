@@ -87,10 +87,10 @@ export default function ResumeUploadForm({
 
       await api.applications.submit(formData);
       setSubmitted(true);
+      setSubmitting(false);
       onSuccess?.();
     } catch (err) {
       setError(err.message);
-    } finally {
       setSubmitting(false);
     }
   };

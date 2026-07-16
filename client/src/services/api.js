@@ -32,22 +32,34 @@ async function request(endpoint, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  let res;
-  try {
-    res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
-  } catch (networkErr) {
-    throw new Error('Network error — please check your connection.');
+  const bases = [API_BASE];
+  if (import.meta.env.PROD && API_BASE.startsWith('http') && typeof window !== 'undefined') {
+    bases.push(`${window.location.origin}/api`);
   }
 
-  // Handle non-JSON responses gracefully
-  const contentType = res.headers.get('content-type') || '';
-  const data = contentType.includes('application/json') ? await res.json() : { message: await res.text() };
+  let lastNetworkErr;
+  for (const base of bases) {
+    let res;
+    try {
+      res = await fetch(`${base}${endpoint}`, { ...options, headers });
+    } catch (networkErr) {
+      lastNetworkErr = networkErr;
+      continue;
+    }
 
-  if (!res.ok) {
-    throw new Error(data.message || `Request failed (${res.status})`);
+    const contentType = res.headers.get('content-type') || '';
+    const data = contentType.includes('application/json') ? await res.json() : { message: await res.text() };
+
+    if (!res.ok) {
+      throw new Error(data.message || `Request failed (${res.status})`);
+    }
+
+    return data;
   }
 
-  return data;
+  throw new Error(lastNetworkErr?.message?.includes('fetch')
+    ? 'Network error — please check your connection.'
+    : 'Network error — please check your connection.');
 }
 
 export const api = {

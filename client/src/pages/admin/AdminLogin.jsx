@@ -50,13 +50,8 @@ export default function AdminLogin() {
     setError(''); setSuccess(''); setLoading(true);
     try {
       const res = await api.auth.forgotPassword(fpEmail);
-      const token = res.resetToken || res.devToken;
-      if (token) {
-        setFpToken(token);
-        setFpStep('forgot-reset');
-      } else {
-        setSuccess(res.message);
-      }
+      setSuccess(res.message);
+      setFpStep('forgot-sent');
     } catch (err) {
       setError(err.message || 'Failed to process request');
     } finally {
@@ -189,6 +184,22 @@ export default function AdminLogin() {
               <button onClick={backToLogin}
                 className="w-full mt-4 py-3 rounded-xl border border-white/15 text-white font-medium hover:bg-white/5 transition-all flex items-center justify-center gap-2 text-sm">
                 <ChevronLeft className="w-4 h-4" /> Back to Login
+              </button>
+            </motion.div>
+          )}
+
+          {fpStep === 'forgot-sent' && (
+            <motion.div key="forgot-sent" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}
+              className="glass-dark rounded-3xl p-8 md:p-10 border border-white/10 shadow-elevated text-center">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-4 shadow-glow">
+                <Mail className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="font-heading font-bold text-2xl text-white mb-2">Check Your Email</h1>
+              <p className="text-surface-300 text-sm mb-2">{success}</p>
+              <p className="text-surface-300/70 text-xs mb-8">Your password has been sent to <strong className="text-white">{fpEmail}</strong>. Check spam folder too.</p>
+              <button onClick={backToLogin}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-accent-400 text-white font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                <ArrowRight className="w-4 h-4" /> Back to Login
               </button>
             </motion.div>
           )}

@@ -10,7 +10,7 @@ import { computeATSScore } from '../utils/atsScorer.js';
 import { sendResumeNotification } from '../utils/emailService.js';
 import { getExpiresAt } from '../utils/cleanupExpiredResumes.js';
 import { createStatusNotification } from '../utils/notificationHelper.js';
-import { persistResume } from '../utils/resumeStorage.js';
+import { persistResume, deleteResumeFile } from '../utils/resumeStorage.js';
 
 const router = Router();
 
@@ -22,6 +22,26 @@ const MIME_BY_EXT = {
 
 function sanitizeDownloadName(name) {
   return (name || 'Candidate').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '_') || 'Candidate';
+}
+
+/** Email + Firebase upload after response — keeps submit fast for users */
+async function finalizeResumeSubmission(application, resumePath, originalFileName) {
+  if (!resumePath || !fs.existsSync(resumePath)) return;
+
+  try {
+    await sendResumeNotification(application, resumePath, originalFileName);
+  } catch (emailErr) {
+    console.warn('Resume email failed:', emailErr.message);
+  }
+
+  try {
+    if (fs.existsSync(resumePath)) {
+      const resumeUrl = await persistResume(resumePath, originalFileName);
+      await applications.updateResumeUrl(application.id, resumeUrl);
+    }
+  } catch (uploadErr) {
+    console.warn('Resume storage upload failed:', uploadErr.message);
+  }
 }
 
 function getResumeExtension(resumeUrl, filePath) {
@@ -93,14 +113,11 @@ router.post('/', (req, res, next) => {
     }
 
     const job = jobId ? await jobs.get(jobId) : null;
+    const resumePath = req.file ? path.join(uploadDir, req.file.filename) : null;
     let resumeUrl = null;
-    if (req.file) {
-      const resumePath = path.join(uploadDir, req.file.filename);
-      resumeUrl = await persistResume(resumePath, req.file.originalname);
-    }
     const createdAt = new Date().toISOString();
 
-    const partial = { name, email, phone, experience, skills, message, resumeUrl };
+    const partial = { name, email, phone, experience, skills, message, resumeUrl: null };
 
     // Compute ATS score from form data + job requirements
     let atsResult = { score: 0, label: 'Needs Review', breakdown: {}, matchedSkills: [], totalSkills: 0 };
@@ -136,35 +153,19 @@ router.post('/', (req, res, next) => {
     await applications.create(application);
 
     if (job) {
-      try { await jobs.incrementApplications(jobId); } catch (_) { /* non-fatal */ }
-    }
-
-    // Send email with all fields + resume attachment to vdort042@gmail.com
-    let emailSent = false;
-    if (req.file) {
-      const resumePath = path.join(uploadDir, req.file.filename);
-      const attachPath = fs.existsSync(resumePath) ? resumePath : null;
-      try {
-        if (attachPath) {
-          await sendResumeNotification(application, attachPath, req.file.originalname);
-        } else {
-          await sendResumeNotification(application, null, req.file.originalname, resumeUrl);
-        }
-        emailSent = true;
-      } catch (emailErr) {
-        console.warn('Resume email failed:', emailErr.message);
-      }
+      jobs.incrementApplications(jobId).catch(() => {});
     }
 
     res.status(201).json({
       success: true,
       data: application,
       ats: atsResult,
-      emailSent,
-      message: emailSent
-        ? 'Application submitted successfully'
-        : 'Application saved. Email alert not sent — check server SMTP_PASS in .env',
+      message: 'Application submitted successfully',
     });
+
+    if (req.file && resumePath) {
+      finalizeResumeSubmission(application, resumePath, req.file.originalname);
+    }
   } catch (err) {
     console.error('Application submit error:', err);
     res.status(500).json({ success: false, message: err.message || 'Failed to submit application' });
@@ -231,6 +232,8 @@ router.patch('/:id/status', authenticate, authorize('admin', 'client'), async (r
 // Delete application
 router.delete('/:id', authenticate, authorize('admin'), async (req, res) => {
   try {
+    const app = await applications.get(req.params.id);
+    if (app?.resumeUrl) await deleteResumeFile(app.resumeUrl);
     await notifications.deleteByApplication(req.params.id);
     await applications.delete(req.params.id);
     res.json({ success: true, message: 'Application deleted' });

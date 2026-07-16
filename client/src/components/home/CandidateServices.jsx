@@ -94,7 +94,7 @@ export default function CandidateServices() {
                   </div>
 
                   {/* Match Stats */}
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     {[
                       { label: 'Matches', value: '24' },
                       { label: 'Applied', value: '8' },

@@ -8,7 +8,7 @@ import WorldMap from '../ui/WorldMap';
 const floatingStats = [
   { icon: Briefcase, value: '500+', label: 'Global Clients', delay: 0.6 },
   { icon: Users, value: '50K+', label: 'Placements', delay: 0.8 },
-  { icon: Globe, value: '25+', label: 'Countries', delay: 1.0 },
+  { icon: Globe, value: 'US Only', label: 'Market', delay: 1.0 },
 ];
 
 export default function Hero() {

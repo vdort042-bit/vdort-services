@@ -58,7 +58,7 @@ export default function PrivacyPolicy() {
             <p>We use cookies and similar technologies to enhance your browsing experience, analyze website traffic, and personalize content. You can control cookie preferences through your browser settings.</p>
 
             <h2 className="font-heading text-navy-900">8. Contact Us</h2>
-            <p>For questions about this Privacy Policy, please contact us at <a href={`mailto:${COMPANY.email}`} className="text-brand-500">{COMPANY.email}</a> or call <a href={`tel:${COMPANY.phone}`} className="text-brand-500">{COMPANY.phone}</a>.</p>
+            <p>For questions about this Privacy Policy, please contact us at <a href={`mailto:${COMPANY.email}`} className="text-brand-500">{COMPANY.email}</a> or call <a href={`tel:${COMPANY.phoneRaw}`} className="text-brand-500">{COMPANY.phone}</a>.</p>
           </div>
         </ScrollReveal>
       </section>

@@ -39,6 +39,12 @@ export function AuthProvider({ children }) {
               setLoading(false);
               return;
             }
+            // JWT exchange failed — don't grant admin/client access without backend token
+            console.warn('Firebase JWT exchange failed — admin/client APIs unavailable');
+            localStorage.removeItem('vdort_token');
+            setUser(null);
+            setLoading(false);
+            return;
           }
 
           // Student — Firebase auth only (clear stale admin JWT)

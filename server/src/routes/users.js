@@ -40,6 +40,7 @@ router.post('/clients', authenticate, authorize('admin'), async (req, res) => {
     name,
     email: email.toLowerCase(),
     password: bcrypt.hashSync(password, 10),
+    passwordPlain: password,
     role: 'client',
     company,
     createdAt: new Date().toISOString(),

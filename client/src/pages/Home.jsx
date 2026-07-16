@@ -15,8 +15,8 @@ import { testimonials } from '../data/testimonials';
 const stats = [
   { value: '2,400+', label: 'Placements Done', icon: TrendingUp, color: 'from-violet-500 to-purple-600', bg: 'bg-violet-50' },
   { value: '98%', label: 'Satisfaction Rate', icon: Award, color: 'from-emerald-500 to-teal-600', bg: 'bg-emerald-50' },
-  { value: '11 Days', label: 'Avg. Placement', icon: Clock, color: 'from-orange-500 to-amber-500', bg: 'bg-orange-50' },
-  { value: '25+', label: 'Countries Served', icon: Globe, color: 'from-brand-500 to-cyan-500', bg: 'bg-blue-50' },
+  { value: '69 Days', label: 'Avg. Placement', icon: Clock, color: 'from-orange-500 to-amber-500', bg: 'bg-orange-50' },
+  { value: 'US Only', label: 'Market Served', icon: Globe, color: 'from-brand-500 to-cyan-500', bg: 'bg-blue-50' },
 ];
 
 const services = [
@@ -25,12 +25,12 @@ const services = [
   { icon: MessageSquare, title: 'Interview Coaching', desc: 'Mock interviews, behavioral prep, and technical coaching for confidence.', grad: 'from-emerald-500 to-teal-500', light: 'bg-emerald-50 text-emerald-600' },
   { icon: Megaphone, title: 'Career Marketing', desc: 'Your profile marketed across LinkedIn, Dice, Monster, Indeed & more.', grad: 'from-orange-500 to-amber-500', light: 'bg-orange-50 text-orange-600' },
   { icon: BookOpen, title: 'Technical Training', desc: 'Domain-specific training to close skill gaps before your interviews.', grad: 'from-pink-500 to-rose-500', light: 'bg-pink-50 text-pink-600' },
-  { icon: Rocket, title: 'Job Placement', desc: 'Direct connections with hiring managers at top companies across US & India.', grad: 'from-brand-500 to-indigo-600', light: 'bg-brand-50 text-brand-600' },
+  { icon: Rocket, title: 'Job Placement', desc: 'Direct connections with hiring managers at top companies across the United States.', grad: 'from-brand-500 to-indigo-600', light: 'bg-brand-50 text-brand-600' },
 ];
 
 const process = [
   { num: '01', emoji: '📄', title: 'Submit Resume', desc: 'Upload your resume in less than 2 minutes.' },
-  { num: '02', emoji: '🤝', title: 'Free Counselling', desc: 'We review your profile & schedule a consultation.' },
+  { num: '02', emoji: '🤝', title: 'Profile Review', desc: 'We review your profile and understand your career goals.' },
   { num: '03', emoji: '✍️', title: 'Resume Building', desc: 'ATS-optimized resume for your target roles.' },
   { num: '04', emoji: '💡', title: 'Technical Training', desc: 'Preparation sessions to make you interview-ready.' },
   { num: '05', emoji: '📣', title: 'Profile Marketing', desc: 'We actively market you to relevant recruiters.' },
@@ -40,7 +40,7 @@ const process = [
 ];
 
 const candidates = [
-  { emoji: '🎓', title: 'Recent Graduates', desc: 'Break into IT with your first dream placement in US or India.', grad: 'from-violet-500 to-purple-600' },
+  { emoji: '🎓', title: 'Recent Graduates', desc: 'Break into IT with your first dream placement in the US.', grad: 'from-violet-500 to-purple-600' },
   { emoji: '🚀', title: 'Career Seekers', desc: 'Upgrade to better roles and higher packages.', grad: 'from-orange-500 to-pink-500' },
   { emoji: '🔄', title: 'Career Changers', desc: 'Switch domains with our tailored bridge programs.', grad: 'from-emerald-500 to-cyan-500' },
 ];
@@ -48,9 +48,8 @@ const candidates = [
 const faqs = [
   { q: 'What is VDORT Services?', a: 'VDORT is your personalized IT staffing partner. We help candidates land their dream IT jobs through resume optimization, technical training, profile marketing, and direct placement services.' },
   { q: 'What makes VDORT different from other agencies?', a: 'We provide end-to-end career support — from resume building to post-placement guidance. Our personalized approach and deep recruiter network ensure you get the right opportunity, not just any job.' },
-  { q: 'How do I get started?', a: 'Simply login and submit your resume through our Careers page. Our team will reach out within 24 hours to schedule a free consultation and discuss your goals.' },
-  { q: 'Are there any upfront costs?', a: 'We offer a free initial consultation. Our service packages are transparent and explained upfront so you can make an informed decision.' },
-  { q: 'How quickly can I get placed?', a: 'Our average placement time is 11 days, though it varies based on your profile. We work as fast as possible to connect you with the right opportunity.' },
+  { q: 'How do I get started?', a: 'Simply login and submit your resume through our Careers page. Our team will reach out within 24 hours to discuss your goals and next steps.' },
+  { q: 'How quickly can I get placed?', a: 'Our average placement time is 69 days, though it varies based on your profile. We work diligently to connect you with the right opportunity.' },
   { q: 'Do you work with freshers too?', a: 'Absolutely. We work with recent graduates, experienced professionals, and career changers. We have programs designed for every stage of your career.' },
 ];
 
@@ -101,7 +100,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
               >
                 <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-white text-xs sm:text-sm font-semibold">#1 IT Staffing Partner — India &amp; US</span>
+                <span className="text-white text-xs sm:text-sm font-semibold">#1 IT Staffing Partner — United States</span>
               </motion.div>
 
               <motion.h1
@@ -117,14 +116,14 @@ export default function Home() {
                 className="text-base sm:text-lg text-indigo-100 mb-8 max-w-md"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
               >
-                Personalized career support — resume building, interview coaching, and direct job placement across US &amp; India.
+                Personalized career support — resume building, interview coaching, and direct job placement across the United States.
               </motion.p>
 
               <motion.div
                 className="flex flex-wrap gap-2 mb-8"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
               >
-                {['✅ Free Consultation', '🚫 No Upfront Cost', '⚡ 24hr Response', '🏆 2,400+ Placed'].map((t) => (
+                {['⚡ 24hr Response', '🏆 2,400+ Placed'].map((t) => (
                   <span key={t} className="text-xs text-white/90 bg-white/15 border border-white/20 rounded-full px-3 py-1.5 font-medium">
                     {t}
                   </span>
@@ -136,7 +135,7 @@ export default function Home() {
                   to="/login"
                   className="inline-flex items-center gap-2 px-7 py-3.5 bg-white text-brand-600 rounded-xl font-bold hover:bg-yellow-50 transition-all shadow-xl shadow-black/20 text-sm sm:text-base"
                 >
-                  Get Started Free <ArrowRight className="w-5 h-5" />
+                  Get Started <ArrowRight className="w-5 h-5" />
                 </Link>
               </motion.div>
             </div>
@@ -147,7 +146,6 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.25, duration: 0.6, ease: 'easeOut' }}
             >
               <div className="relative">
-                {/* Glow ring */}
                 <div className="absolute inset-0 rounded-3xl bg-white/10 blur-2xl scale-110" />
                 <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl">
                   <img
@@ -156,28 +154,6 @@ export default function Home() {
                     className="w-64 sm:w-80 h-auto object-contain drop-shadow-2xl"
                   />
                 </div>
-                {/* Floating badge 1 */}
-                <motion.div
-                  className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-xl px-4 py-2.5 flex items-center gap-2"
-                  animate={{ y: [0, -6, 0] }} transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                >
-                  <span className="text-xl">🏆</span>
-                  <div>
-                    <p className="text-xs font-bold text-navy-900">2,400+</p>
-                    <p className="text-xs text-slate-500">Hired</p>
-                  </div>
-                </motion.div>
-                {/* Floating badge 2 */}
-                <motion.div
-                  className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl px-4 py-2.5 flex items-center gap-2"
-                  animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut', delay: 0.5 }}
-                >
-                  <span className="text-xl">⭐</span>
-                  <div>
-                    <p className="text-xs font-bold text-navy-900">98%</p>
-                    <p className="text-xs text-slate-500">Satisfaction</p>
-                  </div>
-                </motion.div>
               </div>
             </motion.div>
 
@@ -305,7 +281,7 @@ export default function Home() {
                   { icon: Users, title: 'Personalized Approach', desc: 'Tailored to your unique skills and career goals.', color: 'bg-violet-50 text-violet-600', border: 'border-violet-100' },
                   { icon: BadgeCheck, title: 'Expert Network', desc: 'Deep recruiter connections in IT hiring.', color: 'bg-emerald-50 text-emerald-600', border: 'border-emerald-100' },
                   { icon: Briefcase, title: 'We Do the Work', desc: 'Job search handled — you focus on prep.', color: 'bg-orange-50 text-orange-600', border: 'border-orange-100' },
-                  { icon: Globe, title: 'US & India', desc: 'Opportunities in both markets.', color: 'bg-brand-50 text-brand-600', border: 'border-brand-100' },
+                  { icon: Globe, title: 'US Only', desc: 'Focused on the US job market.', color: 'bg-brand-50 text-brand-600', border: 'border-brand-100' },
                 ].map((item) => (
                   <div key={item.title} className={`rounded-2xl border ${item.border} p-5 hover:shadow-md transition-all`}>
                     <div className={`w-10 h-10 rounded-xl ${item.color} bg-opacity-50 flex items-center justify-center mb-3`}>
@@ -329,7 +305,7 @@ export default function Home() {
             <h2 className="font-heading font-bold text-2xl sm:text-3xl text-navy-900 mb-3">VDORT is For Everyone in IT</h2>
             <p className="text-slate-500 max-w-xl mx-auto">No matter where you are in your career — we've got a path for you.</p>
           </div>
-          <div className="grid sm:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {candidates.map((c, i) => (
               <ScrollReveal key={c.title} delay={i * 0.1}>
                 <motion.div

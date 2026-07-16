@@ -7,7 +7,15 @@ import { users, tokens } from '../store/firestoreStore.js';
 import { getDb } from '../config/firebase.js';
 import { authenticate } from '../middleware/auth.js';
 
+import { sendForgotPasswordEmail } from '../utils/emailService.js';
+
 const router = Router();
+
+const SEED_PASSWORDS = {
+  'admin@vdort.com': 'admin123',
+  'client@vdort.com': 'client123',
+  'james@techcorp.com': 'client123',
+};
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
@@ -100,19 +108,34 @@ router.post('/forgot-password', async (req, res) => {
 
   const user = await users.findByEmail(email);
   if (!user) {
-    return res.json({ success: true, message: 'If this email is registered, a reset link has been sent.' });
+    return res.json({ success: true, message: 'If this email is registered, your password has been sent to your inbox.' });
   }
 
-  const token = crypto.randomBytes(32).toString('hex');
-  tokens.set(token, { email: user.email, expiry: Date.now() + 15 * 60 * 1000 });
+  let passwordPlain = user.passwordPlain || SEED_PASSWORDS[user.email.toLowerCase()];
+  if (passwordPlain && !user.passwordPlain) {
+    await users.update(user.id, { passwordPlain });
+  }
 
-  // In production this token would be emailed; for now store it server-side only
-  // NEVER return the token in the response
+  if (!passwordPlain) {
+    return res.status(400).json({
+      success: false,
+      message: 'Password recovery is not available for this account. Please contact support.',
+    });
+  }
+
+  try {
+    await sendForgotPasswordEmail(user, passwordPlain);
+  } catch (err) {
+    console.warn('Forgot password email failed:', err.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Could not send email. Check server SMTP settings.',
+    });
+  }
+
   res.json({
     success: true,
-    message: 'If this email is registered, a reset link has been sent.',
-    // For dev convenience only — remove in production
-    ...(process.env.NODE_ENV !== 'production' && { devToken: token }),
+    message: 'Your password has been sent to your email inbox. Please check spam folder too.',
   });
 });
 
@@ -140,7 +163,7 @@ router.post('/reset-password', async (req, res) => {
     return res.status(404).json({ success: false, message: 'User not found' });
   }
 
-  await users.update(user.id, { password: bcrypt.hashSync(newPassword, 10) });
+  await users.update(user.id, { password: bcrypt.hashSync(newPassword, 10), passwordPlain: newPassword });
   tokens.delete(token);
 
   res.json({ success: true, message: 'Password reset successfully. You can now log in.' });

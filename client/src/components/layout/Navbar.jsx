@@ -28,11 +28,12 @@ export default function Navbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
 
         {/* Brand text */}
-        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shadow-sm">
-            <span className="text-white font-heading font-bold text-sm">V</span>
-          </div>
-          <span className="text-navy-900 font-heading font-bold text-lg tracking-tight">VDORT</span>
+        <Link to="/" className="flex items-center flex-shrink-0">
+          <img
+            src="/logo.png"
+            alt="VDORT Services"
+            className="h-10 sm:h-11 w-auto object-contain"
+          />
         </Link>
 
         {/* Tablet+ Nav */}
@@ -58,7 +59,7 @@ export default function Navbar() {
         {/* Tablet+ CTAs */}
         <div className="hidden md:flex items-center gap-2 lg:gap-3 flex-shrink-0">
           <a
-            href={`tel:${COMPANY.phone}`}
+            href={`tel:${COMPANY.phoneRaw}`}
             className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-brand-600 transition-colors"
           >
             <Phone className="w-4 h-4 text-brand-500" />
@@ -118,7 +119,7 @@ export default function Navbar() {
               ))}
               <div className="mt-3 pt-3 border-t border-gray-100 flex flex-col gap-2">
                 <a
-                  href={`tel:${COMPANY.phone}`}
+                  href={`tel:${COMPANY.phoneRaw}`}
                   className="flex items-center justify-center gap-2 px-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-gray-50 transition-colors"
                 >
                   <Phone className="w-4 h-4 text-brand-500" />

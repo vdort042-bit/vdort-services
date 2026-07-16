@@ -1,12 +1,8 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { applications, notifications } from '../store/firestoreStore.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const uploadDir = path.join(__dirname, '../../uploads');
+import { deleteResumeFile } from './resumeStorage.js';
 
 const HOURS_48_MS = 48 * 60 * 60 * 1000;
+const CLEANUP_INTERVAL_MS = 60 * 60 * 1000;
 
 export async function cleanupExpiredResumes() {
   try {
@@ -14,12 +10,8 @@ export async function cleanupExpiredResumes() {
     if (!expired.length) return;
 
     for (const app of expired) {
-      if (app.resumeUrl && !app.resumeUrl.startsWith('http')) {
-        const filename = path.basename(app.resumeUrl);
-        const filePath = path.join(uploadDir, filename);
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
+      if (app.resumeUrl) {
+        await deleteResumeFile(app.resumeUrl);
       }
       await applications.delete(app.id);
       try { await notifications.deleteByApplication(app.id); } catch (_) {}
@@ -31,15 +23,15 @@ export async function cleanupExpiredResumes() {
 }
 
 export function startCleanupScheduler() {
-  if (process.env.NODE_ENV === 'production' || process.env.DISABLE_RESUME_CLEANUP === 'true') {
-    console.log('⏰ Resume auto-delete disabled (production)');
+  if (process.env.DISABLE_RESUME_CLEANUP === 'true') {
+    console.log('⏰ Resume auto-delete disabled (DISABLE_RESUME_CLEANUP=true)');
     return;
   }
+  console.log('⏰ Resume auto-delete enabled — applications expire after 48 hours');
   cleanupExpiredResumes();
-  setInterval(cleanupExpiredResumes, 60 * 60 * 1000);
+  setInterval(cleanupExpiredResumes, CLEANUP_INTERVAL_MS);
 }
 
 export function getExpiresAt() {
-  if (process.env.NODE_ENV === 'production') return null;
   return new Date(Date.now() + HOURS_48_MS).toISOString();
 }

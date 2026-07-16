@@ -20,17 +20,12 @@ const quickLinks = [
   { label: 'Contact', path: '/contact' },
 ];
 
-const portalLinks = [
-  { label: 'Candidate Login', path: '/login' },
-  { label: 'Admin Portal', path: '/admin/login' },
-];
-
 export default function Footer() {
   return (
     <footer className="bg-navy-950 text-white">
       {/* Main footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
 
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
@@ -38,7 +33,7 @@ export default function Footer() {
               <img src="/logo.png" alt="VDORT Services" className="h-12 w-auto object-contain brightness-200" />
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed mb-5">
-              {COMPANY.expansion}. Your trusted IT staffing partner for US &amp; India placements.
+              {COMPANY.expansion}. Your trusted IT staffing partner for US placements.
             </p>
             <div className="flex gap-3">
               {[
@@ -78,31 +73,20 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Portals */}
-          <div>
-            <h4 className="text-white font-semibold text-sm uppercase tracking-wider mb-5">Portals</h4>
-            <ul className="space-y-2.5">
-              {portalLinks.map((link) => (
-                <li key={link.path}>
-                  <Link
-                    to={link.path}
-                    className="flex items-center gap-2 text-slate-400 hover:text-brand-400 transition-colors text-sm group"
-                  >
-                    <ArrowRight className="w-3 h-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Contact */}
           <div>
             <h4 className="text-white font-semibold text-sm uppercase tracking-wider mb-5">Contact Us</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-brand-400 mt-0.5 shrink-0" />
-                <span className="text-slate-400 text-sm leading-relaxed">{COMPANY.address}</span>
+                <span className="text-slate-400 text-sm leading-relaxed">
+                  {COMPANY.addressLines.map((line, i) => (
+                    <span key={line}>
+                      {line}
+                      {i < COMPANY.addressLines.length - 1 && <br />}
+                    </span>
+                  ))}
+                </span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-brand-400 shrink-0" />
@@ -112,7 +96,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-brand-400 shrink-0" />
-                <a href={`tel:${COMPANY.phone}`} className="text-slate-400 hover:text-brand-400 transition-colors text-sm">
+                <a href={`tel:${COMPANY.phoneRaw}`} className="text-slate-400 hover:text-brand-400 transition-colors text-sm">
                   {COMPANY.phone}
                 </a>
               </li>

@@ -21,11 +21,31 @@ export default function AdminSubscribers() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="font-heading font-bold text-2xl text-navy-900">Newsletter Subscribers</h2>
+        <h2 className="font-heading font-bold text-xl sm:text-2xl text-navy-900">Newsletter Subscribers</h2>
         <p className="text-slate-500 text-sm">{subs.length} subscribers</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-surface-200 shadow-card overflow-hidden">
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {subs.map((s) => (
+          <div key={s.id} className="bg-white rounded-2xl border border-surface-200 p-4 shadow-card flex items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-navy-900 text-sm font-medium truncate">{s.email}</p>
+              <p className="text-slate-500 text-xs mt-0.5">{new Date(s.createdAt).toLocaleDateString()}</p>
+            </div>
+            <button onClick={() => handleDelete(s.id)} className="p-2.5 hover:bg-red-50 rounded-lg text-red-500 cursor-pointer shrink-0">
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+        {subs.length === 0 && (
+          <div className="text-center py-12 bg-white rounded-2xl border border-surface-200">
+            <p className="text-slate-500 text-sm">No subscribers yet</p>
+          </div>
+        )}
+      </div>
+
+      <div className="hidden md:block bg-white rounded-2xl border border-surface-200 shadow-card overflow-hidden">
         <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[480px]">
           <thead className="bg-surface-50 border-b border-surface-200">

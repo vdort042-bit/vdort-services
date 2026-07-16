@@ -2,19 +2,19 @@ export const team = [
   {
     name: 'Vikram Desai',
     designation: 'Founder & CEO',
-    bio: 'With 18+ years in global recruitment and HR technology, Vikram founded VDORT with a vision to revolutionize how organizations find and hire talent using AI and data-driven strategies.',
+    bio: 'With many years in recruitment and HR technology, Vikram founded VDORT with a vision to revolutionize how organizations find and hire talent using AI and data-driven strategies.',
     linkedin: '#',
   },
   {
     name: 'Anita Rao',
     designation: 'Chief Operating Officer',
-    bio: 'Anita brings 15 years of operational excellence from leading staffing firms. She oversees global operations and ensures seamless service delivery across all markets.',
+    bio: 'Anita brings many years of operational excellence from leading staffing firms. She oversees operations and ensures seamless service delivery across the US market.',
     linkedin: '#',
   },
   {
     name: 'James Parker',
     designation: 'VP, North America',
-    bio: 'A seasoned staffing leader with deep expertise in the US and Canadian markets. James drives client relationships and strategic growth across North America.',
+    bio: 'A seasoned staffing leader with deep expertise in the US market. James drives client relationships and strategic growth across North America.',
     linkedin: '#',
   },
   {
@@ -47,8 +47,8 @@ export const coreValues = [
     description: 'We leverage AI and cutting-edge technology to continuously improve our recruitment processes.',
   },
   {
-    title: 'Global Perspective',
-    description: 'We think globally, understanding diverse markets, cultures, and talent ecosystems worldwide.',
+    title: 'US Focus',
+    description: 'We specialize in the US job market, understanding hiring needs, compliance, and talent ecosystems nationwide.',
   },
   {
     title: 'Integrity Always',
@@ -65,12 +65,45 @@ export const coreValues = [
 ];
 
 export const milestones = [
-  { year: 2018, title: 'Founded', description: 'VDORT Services established in Bangalore, India with a vision for AI-driven recruitment.' },
-  { year: 2019, title: 'US Expansion', description: 'Opened our first US office in San Francisco, serving Silicon Valley clients.' },
-  { year: 2020, title: 'AI Platform Launch', description: 'Launched proprietary AI recruitment platform, processing 100K+ resumes monthly.' },
-  { year: 2021, title: '1000+ Clients', description: 'Crossed 1000 active enterprise clients spanning 15 countries.' },
-  { year: 2022, title: 'RPO Excellence', description: 'Won "Best RPO Provider" award and expanded to European markets.' },
-  { year: 2023, title: 'Healthcare Vertical', description: 'Launched specialized Healthcare IT staffing division with 50+ dedicated recruiters.' },
-  { year: 2024, title: 'Global Reach', description: 'Now serving 25+ countries with 200+ recruiters and 50,000+ placements completed.' },
-  { year: 2025, title: 'Gen-AI Integration', description: 'Integrated generative AI into recruitment workflows, achieving 60% faster candidate matching.' },
+  {
+    id: 'founded',
+    era: 'Many Years',
+    title: 'Founded',
+    description: 'VDORT Services established with a vision for AI-driven recruitment and personalized career support.',
+  },
+  {
+    id: 'us-expansion',
+    title: 'US Expansion',
+    description: 'Expanded operations across the United States, serving clients and candidates nationwide.',
+  },
+  {
+    id: 'ai-platform',
+    title: 'AI Platform Launch',
+    description: 'Launched proprietary AI recruitment platform, processing 100K+ resumes monthly.',
+  },
+  {
+    id: 'clients',
+    title: '1000+ Clients',
+    description: 'Crossed 1000 active enterprise clients through trusted US-focused recruitment services.',
+  },
+  {
+    id: 'rpo',
+    title: 'RPO Excellence',
+    description: 'Recognized for recruitment process excellence and end-to-end hiring support.',
+  },
+  {
+    id: 'healthcare',
+    title: 'Healthcare Vertical',
+    description: 'Launched specialized Healthcare IT staffing division with 50+ dedicated recruiters.',
+  },
+  {
+    id: 'us-focus',
+    title: 'US Focus',
+    description: 'Now serving the United States market with 200+ recruiters and 50,000+ placements completed.',
+  },
+  {
+    id: 'gen-ai',
+    title: 'Gen-AI Integration',
+    description: 'Integrated generative AI into recruitment workflows, achieving faster and smarter candidate matching.',
+  },
 ];

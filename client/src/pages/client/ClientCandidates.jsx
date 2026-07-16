@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FileText, Users, TrendingUp, Download, Search, Mail,
+  FileText, Users, Download, Search, Mail,
   Phone, Clock, ChevronDown, Star, CheckCircle, XCircle,
   AlertCircle, Eye, Filter,
 } from 'lucide-react';
@@ -9,24 +9,7 @@ import { collection, query, where, getDocs, doc, updateDoc } from 'firebase/fire
 import { db } from '../../firebase/firebase';
 import { useAuth } from '../../context/AuthContext';
 
-// ── ATS Badge ─────────────────────────────────────────────────────────────────
-function ATSBadge({ score }) {
-  if (score === undefined || score === null) return null;
-  const cfg =
-    score >= 80 ? { bg: 'bg-green-100', text: 'text-green-700', label: 'Excellent' } :
-    score >= 60 ? { bg: 'bg-blue-100',  text: 'text-blue-700',  label: 'Good' } :
-    score >= 40 ? { bg: 'bg-amber-100', text: 'text-amber-700', label: 'Fair' } :
-                  { bg: 'bg-red-100',   text: 'text-red-700',   label: 'Low' };
-
-  return (
-    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl ${cfg.bg}`}>
-      <TrendingUp className={`w-3.5 h-3.5 ${cfg.text}`} />
-      <span className={`text-xs font-bold ${cfg.text}`}>{score}%</span>
-      <span className={`text-xs ${cfg.text} opacity-70`}>{cfg.label}</span>
-    </div>
-  );
-}
-
+// ── ATS Progress ──────────────────────────────────────────────────────────────
 function ATSProgressBar({ score }) {
   if (score === undefined || score === null) return null;
   const color =
@@ -187,15 +170,15 @@ export default function ClientCandidates() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="font-heading font-bold text-2xl text-navy-900">Candidates</h2>
+        <h2 className="font-heading font-bold text-xl sm:text-2xl text-navy-900">Candidates</h2>
         <p className="text-surface-500 text-sm mt-0.5">
           {apps.length} applications · Sorted by ATS score
         </p>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+        <div className="relative flex-1 w-full sm:min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400" />
           <input
             type="text"
@@ -208,7 +191,7 @@ export default function ClientCandidates() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="px-4 py-2.5 rounded-xl border border-surface-200 text-sm outline-none focus:border-brand-500 bg-white"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-surface-200 text-sm outline-none focus:border-brand-500 bg-white"
         >
           <option value="">All Statuses</option>
           {STATUSES.map((s) => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
@@ -216,7 +199,7 @@ export default function ClientCandidates() {
         <select
           value={atsFilter}
           onChange={(e) => setAtsFilter(e.target.value)}
-          className="px-4 py-2.5 rounded-xl border border-surface-200 text-sm outline-none focus:border-brand-500 bg-white"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-surface-200 text-sm outline-none focus:border-brand-500 bg-white"
         >
           <option value="">All ATS Scores</option>
           <option value="excellent">Excellent (80%+)</option>
@@ -256,7 +239,6 @@ export default function ClientCandidates() {
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[app.status] || 'bg-surface-100 text-surface-600'}`}>
                       {app.status || 'new'}
                     </span>
-                    {app.atsScore !== undefined && <ATSBadge score={app.atsScore} />}
                   </div>
 
                   <p className="text-sm text-brand-500 font-medium mb-2">Applied for: {app.jobTitle || '—'}</p>
@@ -304,7 +286,6 @@ export default function ClientCandidates() {
                         onClick={() => setExpanded(expanded === app.id ? null : app.id)}
                         className="flex items-center gap-1 text-xs text-surface-500 hover:text-navy-700 cursor-pointer transition-colors ml-auto"
                       >
-                        <TrendingUp className="w-3.5 h-3.5" />
                         {expanded === app.id ? 'Hide' : 'View'} ATS Details
                         <ChevronDown className={`w-3.5 h-3.5 transition-transform ${expanded === app.id ? 'rotate-180' : ''}`} />
                       </button>

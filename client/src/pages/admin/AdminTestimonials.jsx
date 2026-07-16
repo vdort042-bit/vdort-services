@@ -73,9 +73,9 @@ export default function AdminTestimonials() {
 
       <AnimatePresence>
         {modal && (
-          <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy-950/50 backdrop-blur-sm"
+          <motion.div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-navy-950/50 backdrop-blur-sm"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-elevated"
+            <motion.div className="bg-white rounded-t-2xl sm:rounded-2xl max-w-lg w-full max-h-[92vh] sm:max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-elevated"
               initial={{ scale: 0.95 }} animate={{ scale: 1 }}>
               <div className="flex justify-between mb-4">
                 <h3 className="font-heading font-bold text-lg">Add Testimonial</h3>

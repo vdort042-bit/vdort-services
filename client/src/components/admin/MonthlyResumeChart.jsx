@@ -96,13 +96,17 @@ export default function MonthlyResumeChart() {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    loadApps();
+  }, []);
+
+  const loadApps = () => {
     setLoading(true);
     setError('');
     api.applications.list()
       .then((res) => setAllApps(res.data || []))
       .catch((err) => setError(err.message || 'Failed to load data'))
       .finally(() => setLoading(false));
-  }, []);
+  };
 
   const filtered = useMemo(() => filterByMonth(allApps, year, month), [allApps, year, month]);
 
@@ -155,7 +159,12 @@ export default function MonthlyResumeChart() {
       {loading ? (
         <div className="h-48 flex items-center justify-center text-slate-400 text-sm">Loading chart...</div>
       ) : error ? (
-        <div className="h-48 flex items-center justify-center text-red-500 text-sm">{error}</div>
+        <div className="h-48 flex flex-col items-center justify-center gap-3 text-red-500 text-sm">
+          <span>{error}</span>
+          <button type="button" onClick={loadApps} className="px-4 py-2 rounded-lg bg-red-50 border border-red-100 hover:bg-red-100 font-medium cursor-pointer">
+            Retry
+          </button>
+        </div>
       ) : (
         <div className="flex flex-col md:flex-row items-center gap-8">
           <PieChart slices={slices} size={220} />

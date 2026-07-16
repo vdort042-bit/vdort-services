@@ -51,7 +51,7 @@ export default function ContactSection() {
         <div className="grid lg:grid-cols-5 gap-12">
           {/* Form */}
           <ScrollReveal direction="left" className="lg:col-span-3">
-            <div className="bg-white rounded-2xl shadow-card border border-surface-200 p-8 md:p-10">
+            <div className="bg-white rounded-2xl shadow-card border border-surface-200 p-5 sm:p-8 md:p-10">
               {submitted ? (
                 <motion.div
                   className="flex flex-col items-center justify-center py-16 text-center"
@@ -157,17 +157,15 @@ export default function ContactSection() {
                   <MapPin className="w-5 h-5 text-brand-500" />
                 </div>
                 <div>
-                  <p className="font-medium text-navy-900 text-sm">India Office</p>
-                  <p className="text-slate-500 text-sm mt-0.5">{COMPANY.address}</p>
-                </div>
-              </div>
-              <div className="flex gap-4 items-start">
-                <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center shrink-0">
-                  <MapPin className="w-5 h-5 text-brand-500" />
-                </div>
-                <div>
-                  <p className="font-medium text-navy-900 text-sm">US Office</p>
-                  <p className="text-slate-500 text-sm mt-0.5">{COMPANY.addressUS}</p>
+                  <p className="font-medium text-navy-900 text-sm">Office Address</p>
+                  <p className="text-slate-500 text-sm mt-0.5">
+                    {COMPANY.addressLines.map((line, i) => (
+                      <span key={line}>
+                        {line}
+                        {i < COMPANY.addressLines.length - 1 && <br />}
+                      </span>
+                    ))}
+                  </p>
                 </div>
               </div>
               <div className="flex gap-4 items-center">
@@ -185,7 +183,7 @@ export default function ContactSection() {
                 </div>
                 <div>
                   <p className="font-medium text-navy-900 text-sm">Phone</p>
-                  <a href={`tel:${COMPANY.phone}`} className="text-brand-500 text-sm hover:underline">{COMPANY.phone}</a>
+                  <a href={`tel:${COMPANY.phoneRaw}`} className="text-brand-500 text-sm hover:underline">{COMPANY.phone}</a>
                 </div>
               </div>
               <div className="flex gap-4 items-center">

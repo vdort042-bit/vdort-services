@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Download, Mail, Phone, Briefcase, MessageSquare, TrendingUp, ExternalLink } from 'lucide-react';
-import { getATSBadgeColor, getATSLabel } from '../../utils/atsScore';
+import { X, Download, Mail, Phone, Briefcase, MessageSquare, ExternalLink } from 'lucide-react';
 import { downloadResume } from '../../utils/downloadResume';
 import { getResumeViewUrl, getResumeDownloadLabel } from '../../utils/resumeUrl';
 
@@ -30,9 +29,6 @@ export default function ResumeDetailModal({ app, onClose, onStatusChange, status
     }
   };
 
-  const atsScore = app.atsScore ?? 0;
-  const badgeColor = getATSBadgeColor(atsScore);
-  const atsLabel = app.atsLabel || getATSLabel(atsScore);
   const resumeHref = getResumeViewUrl(app.resumeUrl);
 
   return (
@@ -69,11 +65,6 @@ export default function ResumeDetailModal({ app, onClose, onStatusChange, status
           </div>
 
           <div className="p-6 space-y-5">
-            <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold ${badgeColor}`}>
-              <TrendingUp className="w-4 h-4" />
-              ATS Score: {atsScore}% — {atsLabel}
-            </div>
-
             <div className="grid gap-3">
               {[
                 { icon: Mail, label: 'Email', value: app.email },

@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     q: 'Do you work with international clients?',
-    a: 'Yes, we serve clients across 25+ countries with offices in India and the US. We handle cross-border compliance, visa processing, and global talent mobility.',
+    a: 'Yes, we serve clients in the United States with expertise in US hiring, compliance, and talent mobility.',
   },
 ];
 
@@ -70,21 +70,23 @@ export default function Contact() {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="bg-white rounded-2xl shadow-card border border-surface-200 p-6 sm:p-8 space-y-5">
-              <h3 className="font-heading font-bold text-xl text-navy-900">Our Offices</h3>
-              {[
-                { label: 'India HQ', address: COMPANY.address },
-                { label: 'US Office', address: COMPANY.addressUS },
-              ].map((office) => (
-                <div key={office.label} className="flex gap-4 items-start">
-                  <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center shrink-0">
-                    <MapPin className="w-5 h-5 text-brand-500" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-navy-900 text-sm">{office.label}</p>
-                    <p className="text-slate-500 text-sm mt-0.5">{office.address}</p>
-                  </div>
+              <h3 className="font-heading font-bold text-xl text-navy-900">Our Office</h3>
+              <div className="flex gap-4 items-start">
+                <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center shrink-0">
+                  <MapPin className="w-5 h-5 text-brand-500" />
                 </div>
-              ))}
+                <div>
+                  <p className="font-medium text-navy-900 text-sm">VDORT Services</p>
+                  <p className="text-slate-500 text-sm mt-0.5">
+                    {COMPANY.addressLines.map((line, i) => (
+                      <span key={line}>
+                        {line}
+                        {i < COMPANY.addressLines.length - 1 && <br />}
+                      </span>
+                    ))}
+                  </p>
+                </div>
+              </div>
               <div className="flex gap-4 items-center">
                 <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center shrink-0">
                   <Mail className="w-5 h-5 text-brand-500" />
@@ -95,10 +97,7 @@ export default function Contact() {
                 <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center shrink-0">
                   <Phone className="w-5 h-5 text-brand-500" />
                 </div>
-                <div>
-                  <a href={`tel:${COMPANY.phone}`} className="text-brand-500 text-sm hover:underline font-medium block">{COMPANY.phone}</a>
-                  <a href={`tel:${COMPANY.phoneAlt}`} className="text-slate-500 text-sm hover:underline block">{COMPANY.phoneAlt}</a>
-                </div>
+                <a href={`tel:${COMPANY.phoneRaw}`} className="text-brand-500 text-sm hover:underline font-medium block">{COMPANY.phone}</a>
               </div>
               <div className="flex gap-4 items-center">
                 <div className="w-10 h-10 rounded-lg bg-brand-50 flex items-center justify-center shrink-0">
