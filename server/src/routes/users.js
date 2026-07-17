@@ -8,6 +8,39 @@ import { authenticate, authorize } from '../middleware/auth.js';
 
 const router = Router();
 
+// ── Admins (JWT users in Firestore) ─────────────────────────────
+
+router.post('/admins', authenticate, authorize('admin'), async (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ success: false, message: 'Name, email, and password are required' });
+  }
+  if (password.length < 6) {
+    return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+  const existing = await users.findByEmail(normalizedEmail);
+  if (existing) {
+    return res.status(400).json({ success: false, message: 'Email already registered' });
+  }
+
+  const newAdmin = {
+    id: `usr_admin_${uuid().slice(0, 8)}`,
+    name: name.trim(),
+    email: normalizedEmail,
+    password: bcrypt.hashSync(password, 10),
+    passwordPlain: password,
+    role: 'admin',
+    company: 'VDORT Services Pvt. Ltd.',
+    createdAt: new Date().toISOString(),
+  };
+
+  await getDb().collection('users').doc(newAdmin.id).set(newAdmin);
+  const { password: _, passwordPlain: __, ...adminData } = newAdmin;
+  res.status(201).json({ success: true, data: adminData, message: 'Admin account created successfully' });
+});
+
 // ── Clients (JWT users in Firestore) ────────────────────────────
 
 // List all clients

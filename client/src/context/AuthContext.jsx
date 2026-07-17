@@ -26,28 +26,18 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          const snap = await getDoc(doc(db, 'users', firebaseUser.uid));
-          const data = snap.exists() ? snap.data() : {};
-          const role = data.role || 'student';
-          const name = [data.firstName, data.lastName].filter(Boolean).join(' ') || firebaseUser.displayName || firebaseUser.email;
-
-          // Admin/Client with Firebase Auth → exchange for JWT so backend APIs work
-          if (role === 'admin' || role === 'client') {
-            const jwtUser = await exchangeFirebaseForJwt(firebaseUser);
-            if (jwtUser) {
-              setUser({ ...jwtUser, uid: firebaseUser.uid, authType: 'firebase-jwt' });
-              setLoading(false);
-              return;
-            }
-            // JWT exchange failed — don't grant admin/client access without backend token
-            console.warn('Firebase JWT exchange failed — admin/client APIs unavailable');
-            localStorage.removeItem('vdort_token');
-            setUser(null);
+          const jwtUser = await exchangeFirebaseForJwt(firebaseUser);
+          if (jwtUser?.role === 'admin' || jwtUser?.role === 'client') {
+            setUser({ ...jwtUser, uid: firebaseUser.uid, authType: 'firebase-jwt' });
             setLoading(false);
             return;
           }
 
-          // Student — Firebase auth only (clear stale admin JWT)
+          const snap = await getDoc(doc(db, 'users', firebaseUser.uid));
+          const data = snap.exists() ? snap.data() : {};
+          const role = (data.role || 'student').toLowerCase();
+          const name = [data.firstName, data.lastName].filter(Boolean).join(' ') || firebaseUser.displayName || firebaseUser.email;
+
           localStorage.removeItem('vdort_token');
           setUser({
             uid: firebaseUser.uid,
@@ -119,19 +109,10 @@ export function AuthProvider({ children }) {
 
     try {
       const cred = await signInWithEmailAndPassword(auth, normalizedEmail, password);
-      const snap = await getDoc(doc(db, 'users', cred.user.uid));
-      const data = snap.exists() ? snap.data() : {};
-      const role = data.role;
-
-      if (role !== 'admin' && role !== 'client') {
-        await signOut(auth);
-        throw new Error('Invalid email or password');
-      }
-
       const jwtUser = await exchangeFirebaseForJwt(cred.user);
-      if (!jwtUser) {
+      if (!jwtUser || (jwtUser.role !== 'admin' && jwtUser.role !== 'client')) {
         await signOut(auth);
-        throw new Error('Login failed — Firestore mein role "admin" set karein aur dubara try karein.');
+        throw new Error('Admin account setup incomplete. Firestore users mein email + role: admin check karein.');
       }
 
       const u = { ...jwtUser, uid: cred.user.uid, authType: 'firebase-jwt' };

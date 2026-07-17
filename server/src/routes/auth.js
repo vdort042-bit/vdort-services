@@ -17,6 +17,42 @@ const SEED_PASSWORDS = {
   'james@techcorp.com': 'client123',
 };
 
+function verifyPassword(plain, stored) {
+  if (!stored) return false;
+  if (typeof stored === 'string' && stored.startsWith('$2')) {
+    return bcrypt.compareSync(plain, stored);
+  }
+  return plain === stored;
+}
+
+/** Resolve admin/client profile by Firebase UID or email (custom doc ids like usr_admin_002). */
+async function resolvePortalProfile(uid, email) {
+  const uidSnap = await getDb().collection('users').doc(uid).get();
+  if (uidSnap.exists) {
+    const data = uidSnap.data();
+    const role = (data.role || 'student').toLowerCase();
+    if (role === 'admin' || role === 'client') {
+      return { id: uid, ...data, role };
+    }
+  }
+
+  const byEmail = await users.findByEmail(email);
+  if (byEmail) {
+    const role = (byEmail.role || 'student').toLowerCase();
+    if (role === 'admin' || role === 'client') {
+      return { ...byEmail, role };
+    }
+  }
+
+  return null;
+}
+
+function profileDisplayName(profile, fallbackEmail) {
+  return profile.name
+    || [profile.firstName, profile.middleName, profile.lastName].filter(Boolean).join(' ')
+    || fallbackEmail;
+}
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -24,7 +60,7 @@ router.post('/login', async (req, res) => {
   }
 
   const user = await users.findByEmail(email);
-  if (!user?.password || !bcrypt.compareSync(password, user.password)) {
+  if (!user || !verifyPassword(password, user.password)) {
     return res.status(401).json({ success: false, message: 'Invalid credentials' });
   }
 
@@ -62,28 +98,23 @@ router.post('/firebase-exchange', async (req, res) => {
   }
 
   try {
-    // Verify the Firebase ID token
     const decoded = await getAuth().verifyIdToken(idToken);
     const uid = decoded.uid;
+    const email = decoded.email || '';
 
-    // Get user profile from Firestore
-    const snap = await getDb().collection('users').doc(uid).get();
-    if (!snap.exists) {
-      return res.status(404).json({ success: false, message: 'User profile not found in Firestore' });
+    const profile = await resolvePortalProfile(uid, email);
+    if (!profile) {
+      return res.status(403).json({
+        success: false,
+        message: 'Admin/client profile not found. Firestore users collection mein role: admin set karein.',
+      });
     }
 
-    const data = snap.data();
-    const role = data.role || 'student';
-
-    // Only issue JWT for admin and client roles
-    if (role !== 'admin' && role !== 'client') {
-      return res.status(403).json({ success: false, message: 'JWT not required for student accounts' });
-    }
-
-    const name = [data.firstName, data.middleName, data.lastName].filter(Boolean).join(' ') || decoded.name || decoded.email;
+    const { role } = profile;
+    const name = profileDisplayName(profile, email);
 
     const token = jwt.sign(
-      { id: uid, email: decoded.email, role, name, company: data.company || '' },
+      { id: profile.id, email, role, name, company: profile.company || '' },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -92,7 +123,7 @@ router.post('/firebase-exchange', async (req, res) => {
       success: true,
       data: {
         token,
-        user: { id: uid, name, email: decoded.email, role, company: data.company || '' },
+        user: { id: profile.id, name, email, role, company: profile.company || '' },
       },
     });
   } catch (err) {
