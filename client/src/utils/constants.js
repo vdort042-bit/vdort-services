@@ -17,7 +17,7 @@ export const COMPANY = {
     'State: Uttarakhand',
     'PIN Code: 248171',
   ],
-  linkedin: 'https://linkedin.com/company/vdort',
+  linkedin: 'https://www.linkedin.com/company/vdort-services/',
   twitter: 'https://twitter.com/vdort',
   facebook: 'https://facebook.com/vdort',
   instagram: 'https://instagram.com/vdort',
