@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut, signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebase';
 import api from '../services/api';
@@ -98,14 +98,60 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  // JWT login (for admin/client portals via /admin/login, /client/login)
+  // Admin/client login — JWT first, then Firebase Auth fallback for console-created admins
   const login = useCallback(async (email, password) => {
-    const res = await api.auth.login(email, password);
-    localStorage.setItem('vdort_token', res.data.token);
-    const rawUser = res.data.user;
-    const u = { ...rawUser, uid: rawUser.uid || rawUser.id, id: rawUser.id || rawUser.uid, authType: 'jwt' };
-    setUser(u);
-    return u;
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (auth.currentUser) {
+      await signOut(auth);
+    }
+
+    try {
+      const res = await api.auth.login(normalizedEmail, password);
+      localStorage.setItem('vdort_token', res.data.token);
+      const rawUser = res.data.user;
+      const u = { ...rawUser, uid: rawUser.uid || rawUser.id, id: rawUser.id || rawUser.uid, authType: 'jwt' };
+      setUser(u);
+      return u;
+    } catch {
+      // JWT failed — try Firebase Auth (admins created in Firebase Console)
+    }
+
+    try {
+      const cred = await signInWithEmailAndPassword(auth, normalizedEmail, password);
+      const snap = await getDoc(doc(db, 'users', cred.user.uid));
+      const data = snap.exists() ? snap.data() : {};
+      const role = data.role;
+
+      if (role !== 'admin' && role !== 'client') {
+        await signOut(auth);
+        throw new Error('Invalid email or password');
+      }
+
+      const jwtUser = await exchangeFirebaseForJwt(cred.user);
+      if (!jwtUser) {
+        await signOut(auth);
+        throw new Error('Login failed — Firestore mein role "admin" set karein aur dubara try karein.');
+      }
+
+      const u = { ...jwtUser, uid: cred.user.uid, authType: 'firebase-jwt' };
+      setUser(u);
+      return u;
+    } catch (err) {
+      if (auth.currentUser) await signOut(auth);
+      localStorage.removeItem('vdort_token');
+
+      const code = err?.code || '';
+      if (
+        code === 'auth/user-not-found' ||
+        code === 'auth/wrong-password' ||
+        code === 'auth/invalid-credential' ||
+        code === 'auth/invalid-email'
+      ) {
+        throw new Error('Invalid email or password');
+      }
+      throw new Error(err.message || 'Invalid credentials');
+    }
   }, []);
 
   // Universal logout

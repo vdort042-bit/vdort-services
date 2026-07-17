@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, ArrowRight, Shield, Eye, EyeOff, ChevronLeft, KeyRound } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import Button from '../../components/ui/Button';
 import ParticleBackground from '../../components/ui/ParticleBackground';
 import api from '../../services/api';
 
@@ -148,9 +147,23 @@ export default function AdminLogin() {
                     Forgot password?
                   </button>
                 </div>
-                <Button type="submit" variant="primary" size="lg" className="w-full mt-1" iconRight={ArrowRight} disabled={loading}>
-                  {loading ? 'Signing in...' : 'Sign In to Admin'}
-                </Button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-500 to-accent-400 text-white font-semibold hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2 mt-1"
+                >
+                  {loading ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    <>
+                      Sign In to Admin
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
               </form>
               {import.meta.env.DEV && <p className="text-surface-300/50 text-xs text-center mt-6">Dev: admin@vdort.com / admin123</p>}
             </motion.div>
