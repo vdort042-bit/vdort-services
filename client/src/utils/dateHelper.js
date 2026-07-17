@@ -12,7 +12,9 @@ export function getYearMonth(value) {
 export function filterByMonth(apps, year, month) {
   return apps.filter((app) => {
     const ym = getYearMonth(app.createdAt);
-    return ym && ym.year === year && ym.month === month;
+    if (!ym || ym.year !== year) return false;
+    if (!month) return true;
+    return ym.month === month;
   });
 }
 

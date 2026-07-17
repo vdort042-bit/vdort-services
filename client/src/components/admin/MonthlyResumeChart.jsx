@@ -27,7 +27,7 @@ const STATUS_CONFIG = [
 ];
 
 const currentYear = new Date().getFullYear();
-const YEARS = [currentYear - 1, currentYear, currentYear + 1];
+const YEARS = Array.from({ length: 2035 - 2026 + 1 }, (_, i) => 2026 + i);
 
 function polarToCartesian(cx, cy, r, angleDeg) {
   const rad = ((angleDeg - 90) * Math.PI) / 180;
@@ -128,7 +128,8 @@ export default function MonthlyResumeChart() {
     }));
   }, [data]);
 
-  const monthLabel = MONTHS.find((m) => m.value === month)?.label || '';
+  const monthLabel = month ? MONTHS.find((m) => m.value === month)?.label || '' : 'Full Year';
+  const periodLabel = month ? `${monthLabel} ${year}` : `${year} (Full Year)`;
 
   return (
     <div className="bg-white rounded-2xl border border-surface-200 shadow-card p-6">
@@ -145,10 +146,11 @@ export default function MonthlyResumeChart() {
             ))}
           </select>
           <select
-            value={month}
-            onChange={(e) => setMonth(Number(e.target.value))}
+            value={month || ''}
+            onChange={(e) => setMonth(e.target.value ? Number(e.target.value) : 0)}
             className="px-4 py-2 rounded-xl border border-surface-200 text-sm outline-none focus:border-brand-500 bg-white cursor-pointer"
           >
+            <option value="">All Months</option>
             {MONTHS.map((m) => (
               <option key={m.value} value={m.value}>{m.label}</option>
             ))}
@@ -171,11 +173,11 @@ export default function MonthlyResumeChart() {
 
           <div className="flex-1 w-full space-y-3">
             <p className="text-sm text-slate-500 mb-4">
-              <span className="font-semibold text-navy-900">{monthLabel} {year}</span>
+              <span className="font-semibold text-navy-900">{periodLabel}</span>
               {' — '}{data?.total || 0} total resume{data?.total !== 1 ? 's' : ''} submitted
             </p>
 
-            {data?.total === 0 && data?.availableMonths?.length > 0 && (
+            {data?.total === 0 && data?.availableMonths?.length > 0 && month > 0 && (
               <p className="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-3">
                 No resumes submitted in {monthLabel} {year}. Try:{' '}
                 {data.availableMonths.slice(0, 3).map((ym) => {

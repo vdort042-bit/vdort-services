@@ -5,12 +5,6 @@ import { COMPANY } from '../../utils/constants';
 const LinkedinIcon = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
 );
-const InstagramIcon = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-);
-const FacebookIcon = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-);
 
 const quickLinks = [
   { label: 'Home', path: '/' },
@@ -36,22 +30,15 @@ export default function Footer() {
               {COMPANY.expansion}. Your trusted IT staffing partner for US placements.
             </p>
             <div className="flex gap-3">
-              {[
-                { icon: LinkedinIcon, href: COMPANY.linkedin, label: 'LinkedIn' },
-                { icon: FacebookIcon, href: COMPANY.facebook, label: 'Facebook' },
-                { icon: InstagramIcon, href: COMPANY.instagram, label: 'Instagram' },
-              ].map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.label}
-                  className="w-9 h-9 rounded-lg bg-white/8 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-brand-500/30 hover:border-brand-500/40 transition-all"
-                >
-                  <s.icon className="w-4 h-4" />
-                </a>
-              ))}
+              <a
+                href={COMPANY.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="w-9 h-9 rounded-lg bg-white/8 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-brand-500/30 hover:border-brand-500/40 transition-all"
+              >
+                <LinkedinIcon className="w-4 h-4" />
+              </a>
             </div>
           </div>
 
