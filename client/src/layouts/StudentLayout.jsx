@@ -1,7 +1,8 @@
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { LogOut, GraduationCap } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import StudentNotificationBell from '../components/student/StudentNotificationBell';
+import Logo from '../components/ui/Logo';
 
 export default function StudentLayout() {
   const { logout } = useAuth();
@@ -16,10 +17,7 @@ export default function StudentLayout() {
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <header className="sticky top-0 z-20 bg-white border-b border-slate-200 px-3 sm:px-4 lg:px-8 min-h-16 py-2 flex items-center gap-2 sm:gap-4 shadow-sm">
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-            <GraduationCap className="w-4 h-4 text-white" />
-          </div>
-          <span className="font-heading font-semibold text-navy-900 hidden sm:block text-sm">VDORT</span>
+          <Logo className="h-8 w-auto max-w-[110px] object-contain" />
         </Link>
 
         <h1 className="font-heading font-semibold text-sm sm:text-base text-navy-900 truncate min-w-0 flex-1">

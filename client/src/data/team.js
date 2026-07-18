@@ -1,6 +1,6 @@
 export const team = [
   {
-    name: 'Vikram Desai',
+    name: 'Vikram Adhikari',
     designation: 'Founder & CEO',
     bio: 'With many years in recruitment and HR technology, Vikram founded VDORT with a vision to revolutionize how organizations find and hire talent using AI and data-driven strategies.',
     linkedin: '#',

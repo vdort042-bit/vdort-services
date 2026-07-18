@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, ArrowRight, Shield, Eye, EyeOff, ChevronLeft, KeyRound } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import ParticleBackground from '../../components/ui/ParticleBackground';
+import Logo from '../../components/ui/Logo';
 import api from '../../services/api';
 
 export default function AdminLogin() {
@@ -91,13 +92,9 @@ export default function AdminLogin() {
       >
         {/* Branding */}
         <div className="text-center mb-6">
-          <Link to="/" className="inline-flex items-center gap-3 group mb-4">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-500 to-accent-400 flex items-center justify-center shadow-lg shadow-brand-500/40">
-              <span className="text-white font-heading font-bold text-2xl">V</span>
-            </div>
-            <div className="text-left">
-              <span className="text-white font-heading font-bold text-2xl tracking-tight block">VDORT</span>
-              <span className="text-surface-300 text-xs tracking-widest uppercase">Services Pvt. Ltd.</span>
+          <Link to="/" className="inline-flex justify-center group mb-4">
+            <div className="bg-white rounded-2xl px-3 py-2 shadow-lg shadow-black/20">
+              <Logo className="h-14 sm:h-16 w-auto max-w-[240px] object-contain" />
             </div>
           </Link>
         </div>

@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Phone, LogIn } from 'lucide-react';
 import { NAV_LINKS, COMPANY } from '../../utils/constants';
+import Logo from '../ui/Logo';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,11 +30,7 @@ export default function Navbar() {
 
         {/* Brand text */}
         <Link to="/" className="flex items-center flex-shrink-0">
-          <img
-            src="/logo.png"
-            alt="VDORT Services"
-            className="h-10 sm:h-11 w-auto object-contain"
-          />
+          <Logo className="h-10 sm:h-12 w-auto max-w-[180px] sm:max-w-[220px] object-contain" />
         </Link>
 
         {/* Tablet+ Nav */}

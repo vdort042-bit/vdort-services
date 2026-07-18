@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  LayoutDashboard, Briefcase, Users, LogOut, Menu, X, ChevronRight, Building2,
+  LayoutDashboard, Briefcase, Users, LogOut, Menu, X, ChevronRight,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../components/ui/Logo';
 
 const navItems = [
   { label: 'Dashboard', path: '/client', icon: LayoutDashboard, end: true },
@@ -28,11 +29,11 @@ export default function ClientLayout() {
         <div className="flex flex-col h-full">
           <div className="p-6 border-b border-navy-800 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-accent-400 flex items-center justify-center">
-                <Building2 className="w-5 h-5 text-white" />
+              <div className="bg-white rounded-xl px-2 py-1.5 shrink-0">
+                <Logo className="h-8 w-auto max-w-[120px] object-contain" />
               </div>
               <div>
-                <span className="text-white font-heading font-bold text-lg">Client Portal</span>
+                <span className="text-white font-heading font-bold text-sm">Client Portal</span>
                 <span className="block text-[10px] text-brand-400 uppercase tracking-widest truncate max-w-[160px]">
                   {user?.company || 'VDORT Client'}
                 </span>

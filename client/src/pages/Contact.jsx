@@ -105,7 +105,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-navy-900 text-sm font-medium">Mon - Fri</p>
-                  <p className="text-slate-500 text-sm">9:00 AM - 6:00 PM IST</p>
+                  <p className="text-slate-500 text-sm">9:30 AM - 6:30 PM EST</p>
                 </div>
               </div>
             </div>

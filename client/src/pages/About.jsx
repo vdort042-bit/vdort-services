@@ -52,7 +52,7 @@ export default function About() {
                 />
                 <div className="space-y-4 text-slate-600 leading-relaxed">
                   <p>
-                    Many years ago, Vikram Desai founded VDORT Services from a simple yet powerful observation: the recruitment industry was ripe for a technology revolution. Traditional staffing approaches were slow, imprecise, and failed to serve the rapidly evolving needs of modern enterprises.
+                    Many years ago, Vikram Adhikari founded VDORT Services from a simple yet powerful observation: the recruitment industry was ripe for a technology revolution. Traditional staffing approaches were slow, imprecise, and failed to serve the rapidly evolving needs of modern enterprises.
                   </p>
                   <p>
                     Starting with a small team of passionate recruiters, we set out to build something different — a recruitment company that combines the warmth of human connection with the precision of artificial intelligence. Today, VDORT serves 500+ clients across the United States with a team of 200+ specialized recruiters.
@@ -174,7 +174,7 @@ export default function About() {
             <blockquote className="text-xl md:text-2xl text-white leading-relaxed mb-8 italic font-light">
               "We started VDORT with a belief that technology could make recruitment more human, not less. Our AI doesn't replace the recruiter's intuition — it amplifies it, allowing our team to focus on what truly matters: understanding people, building relationships, and creating opportunities that change lives."
             </blockquote>
-            <p className="text-white font-heading font-bold text-lg">Vikram Desai</p>
+            <p className="text-white font-heading font-bold text-lg">Vikram Adhikari</p>
             <p className="text-brand-300 text-sm">Founder & CEO, VDORT Services</p>
           </ScrollReveal>
         </div>

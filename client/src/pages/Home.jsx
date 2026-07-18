@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import ScrollReveal from '../components/ui/ScrollReveal';
+import Logo from '../components/ui/Logo';
 import TestimonialCarousel from '../components/ui/TestimonialCarousel';
 import { testimonials } from '../data/testimonials';
 
@@ -148,11 +149,7 @@ export default function Home() {
               <div className="relative">
                 <div className="absolute inset-0 rounded-3xl bg-white/10 blur-2xl scale-110" />
                 <div className="relative bg-white/10 backdrop-blur-sm border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl">
-                  <img
-                    src="/logo.png"
-                    alt="VDORT Services"
-                    className="w-64 sm:w-80 h-auto object-contain drop-shadow-2xl"
-                  />
+                  <Logo className="w-64 sm:w-80 max-w-full h-auto object-contain drop-shadow-2xl" />
                 </div>
               </div>
             </motion.div>

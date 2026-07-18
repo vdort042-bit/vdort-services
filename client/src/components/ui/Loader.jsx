@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import Logo from './Logo';
 
 export default function Loader({ fullScreen = false }) {
   return (
@@ -16,8 +17,8 @@ export default function Loader({ fullScreen = false }) {
         >
           <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-brand-400 border-r-brand-500" />
           <div className="absolute inset-2 rounded-full border-2 border-transparent border-b-accent-400 border-l-accent-500" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-2xl font-heading font-bold text-white">V</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-white rounded-full">
+            <Logo className="h-10 w-auto max-w-[72px] object-contain" />
           </div>
         </motion.div>
         <motion.p

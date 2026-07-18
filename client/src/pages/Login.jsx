@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Logo from '../components/ui/Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mail, Lock, ArrowRight, User, Phone,
@@ -247,7 +248,7 @@ export default function Login() {
         <div className="relative z-10">
           {/* Logo */}
           <Link to="/">
-            <img src="/logo.png" alt="VDORT Services" className="h-20 w-auto object-contain mb-10" />
+            <Logo className="h-20 w-auto max-w-[280px] object-contain mb-10" />
           </Link>
 
           {/* Dynamic heading */}
@@ -283,7 +284,7 @@ export default function Login() {
         {/* Mobile logo */}
         <div className="lg:hidden mb-8">
           <Link to="/">
-            <img src="/logo.png" alt="VDORT Services" className="h-14 w-auto object-contain" />
+            <Logo className="h-14 w-auto max-w-[220px] object-contain" />
           </Link>
         </div>
 
