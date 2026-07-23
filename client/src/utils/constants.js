@@ -3,7 +3,7 @@ export const COMPANY = {
   fullName: 'VDORT Services Pvt. Ltd.',
   expansion: 'Value-Driven Opportunities, Recruitment & Talent',
   tagline: 'Connecting Talent to Opportunity',
-  email: 'Careeers@vdortservices.com',
+  email: 'Careers@vdortservices.com',
   phone: '+1 (888) 500-5453',
   phoneRaw: '+18885005453',
   address: 'Building No./Flat No.: HCL COMPOUND, Name Of Premises/Building: C/O SANJAY CHAMAN VIHAR SP, Road/Street: CHAMAN VIHAR, PO MAJRA, Locality/Sub Locality: Niranjanpur, City/Town/Village: Dehradun, District: Dehradun, State: Uttarakhand, PIN Code: 248171',

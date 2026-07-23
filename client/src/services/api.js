@@ -1,11 +1,14 @@
 import { getApiBases } from '../config/apiConfig.js';
 
-async function getFirebaseToken() {
+const DEFAULT_TIMEOUT_MS = 20000;
+const UPLOAD_TIMEOUT_MS = 90000;
+
+async function getFirebaseToken(forceRefresh = false) {
   try {
     const { auth } = await import('../firebase/firebase');
     if (auth.authStateReady) await auth.authStateReady();
     const user = auth.currentUser;
-    if (user) return await user.getIdToken(true);
+    if (user) return await user.getIdToken(forceRefresh);
   } catch {
     // ignore
   }
@@ -15,12 +18,23 @@ async function getFirebaseToken() {
 async function getAuthToken() {
   const jwt = localStorage.getItem('vdort_token');
   if (jwt) return jwt;
-  return getFirebaseToken();
+  return getFirebaseToken(false);
+}
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = DEFAULT_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function request(endpoint, options = {}) {
   const token = options.useFirebaseToken
-    ? await getFirebaseToken()
+    ? await getFirebaseToken(false)
     : await getAuthToken();
   const headers = { ...options.headers };
 
@@ -33,12 +47,13 @@ async function request(endpoint, options = {}) {
   }
 
   const bases = getApiBases();
+  const timeoutMs = options.body instanceof FormData ? UPLOAD_TIMEOUT_MS : DEFAULT_TIMEOUT_MS;
 
   let lastNetworkErr;
   for (const base of bases) {
     let res;
     try {
-      res = await fetch(`${base}${endpoint}`, { ...options, headers });
+      res = await fetchWithTimeout(`${base}${endpoint}`, { ...options, headers }, timeoutMs);
     } catch (networkErr) {
       lastNetworkErr = networkErr;
       continue;
@@ -52,6 +67,10 @@ async function request(endpoint, options = {}) {
     }
 
     return data;
+  }
+
+  if (lastNetworkErr?.name === 'AbortError') {
+    throw new Error('Server is waking up — please wait a moment and try again.');
   }
 
   throw new Error(lastNetworkErr?.message?.includes('fetch')

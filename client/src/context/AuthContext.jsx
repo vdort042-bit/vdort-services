@@ -23,20 +23,35 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
-          const jwtUser = await exchangeFirebaseForJwt(firebaseUser);
-          if (jwtUser?.role === 'admin' || jwtUser?.role === 'client') {
-            setUser({ ...jwtUser, uid: firebaseUser.uid, authType: 'firebase-jwt' });
-            setLoading(false);
-            return;
-          }
+    let settled = false;
 
+    const finishLoading = () => {
+      if (!settled) {
+        settled = true;
+        setLoading(false);
+      }
+    };
+
+    const authTimeout = setTimeout(finishLoading, 10000);
+
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      try {
+        if (firebaseUser) {
           const snap = await getDoc(doc(db, 'users', firebaseUser.uid));
           const data = snap.exists() ? snap.data() : {};
           const role = (data.role || 'student').toLowerCase();
           const name = [data.firstName, data.lastName].filter(Boolean).join(' ') || firebaseUser.displayName || firebaseUser.email;
+
+          if (role === 'admin' || role === 'client') {
+            const jwtUser = await exchangeFirebaseForJwt(firebaseUser);
+            if (jwtUser) {
+              setUser({ ...jwtUser, uid: firebaseUser.uid, authType: 'firebase-jwt' });
+              return;
+            }
+            localStorage.removeItem('vdort_token');
+            setUser(null);
+            return;
+          }
 
           localStorage.removeItem('vdort_token');
           setUser({
@@ -51,23 +66,9 @@ export function AuthProvider({ children }) {
             company: data.company || '',
             authType: 'firebase',
           });
-        } catch (err) {
-          console.error('Firestore user fetch error:', err);
-          localStorage.removeItem('vdort_token');
-          setUser({
-            uid: firebaseUser.uid,
-            id: firebaseUser.uid,
-            email: firebaseUser.email,
-            name: firebaseUser.displayName || firebaseUser.email,
-            firstName: '',
-            lastName: '',
-            phone: '',
-            role: 'student',
-            authType: 'firebase',
-          });
+          return;
         }
-      } else {
-        // No Firebase user — check JWT (for admin@vdort.com / client@vdort.com)
+
         const token = localStorage.getItem('vdort_token');
         if (token) {
           try {
@@ -81,11 +82,20 @@ export function AuthProvider({ children }) {
         } else {
           setUser(null);
         }
+      } catch (err) {
+        console.error('Auth init error:', err);
+        localStorage.removeItem('vdort_token');
+        setUser(null);
+      } finally {
+        clearTimeout(authTimeout);
+        finishLoading();
       }
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      clearTimeout(authTimeout);
+      unsubscribe();
+    };
   }, []);
 
   // Admin/client login — JWT first, then Firebase Auth fallback for console-created admins

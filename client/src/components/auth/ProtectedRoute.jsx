@@ -1,17 +1,22 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { auth } from '../../firebase/firebase';
 import Loader from '../ui/Loader';
+
+const LOGIN_PATHS = {
+  admin: '/admin/login',
+  client: '/client/login',
+  student: '/login',
+};
 
 export default function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth();
 
+  if (loading) return <Loader fullScreen />;
+
   if (!user) {
-    const hasJwtToken = !!localStorage.getItem('vdort_token');
-    const hasFirebaseSession = !!auth.currentUser;
-    if (loading || hasJwtToken || hasFirebaseSession) return <Loader fullScreen />;
-    return <Navigate to="/" replace />;
+    return <Navigate to={LOGIN_PATHS[role] || '/'} replace />;
   }
+
   if (role && user.role !== role) {
     if (user.role === 'admin') return <Navigate to="/admin" replace />;
     if (user.role === 'client') return <Navigate to="/client" replace />;
